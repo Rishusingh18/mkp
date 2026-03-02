@@ -171,9 +171,9 @@ export default function Summary() {
             <div className="mt-16 border-t border-primary/20 pt-8 relative z-10">
                 <h5 className="text-center text-primary text-sm font-medium uppercase tracking-widest mb-8">Trusted By Industry Leaders</h5>
                 <div className="relative w-full overflow-hidden bg-[#faecc3]/50 dark:bg-[#faecc3]/5 py-8 rounded-xl backdrop-blur-sm">
-                    <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background-light dark:from-background-dark to-transparent z-10"></div>
-                    <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent z-10"></div>
-                    <div className="flex w-[200%] animate-scroll">
+                    <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faecc3] to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faecc3] to-transparent z-10 pointer-events-none"></div>
+                    <div className="flex w-[200%] animate-marquee">
                         <div className="flex justify-around items-center w-full px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
                             <span className="text-xl font-bold font-serif text-primary dark:text-slate-400">Acme Corp</span>
                             <span className="text-xl font-bold font-sans text-primary dark:text-slate-400 flex items-center gap-1"><span className="material-icons-outlined">token</span> Vertex</span>

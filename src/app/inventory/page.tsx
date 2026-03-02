@@ -3,13 +3,82 @@
 import Link from "next/link";
 import { useState } from "react";
 
+type InventoryItem = {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    price: number;
+    hasQuantityOptions: boolean;
+};
+
+const inventoryItems: InventoryItem[] = [
+    { id: "sofa", name: "Sofa Set (3 Seater)", description: "Includes cushions and upholstery protection", icon: "chair", price: 2500, hasQuantityOptions: true },
+    { id: "coffeeTable", name: "Coffee Table", description: "Glass / Wood", icon: "table_restaurant", price: 500, hasQuantityOptions: false },
+    { id: "tvUnit", name: "TV Unit", description: "Medium Size", icon: "tv", price: 800, hasQuantityOptions: false },
+    { id: "bookshelf", name: "Bookshelf", description: "Standard wooden bookshelf. Please empty contents before packing.", icon: "menu_book", price: 725, hasQuantityOptions: true },
+    { id: "recliner", name: "Recliner", description: "Single Seater", icon: "weekend", price: 1200, hasQuantityOptions: false },
+    { id: "floorLamp", name: "Floor Lamp", description: "Fragile", icon: "light", price: 300, hasQuantityOptions: false },
+    { id: "storageBed", name: "Storage Bed", description: "King / Queen", icon: "bed", price: 3500, hasQuantityOptions: false },
+    { id: "wardrobe", name: "Wardrobe", description: "Almirah", icon: "checkroom", price: 2000, hasQuantityOptions: false },
+    { id: "diningSet", name: "Dining Set", description: "4/6 Seater", icon: "restaurant", price: 2200, hasQuantityOptions: false },
+    { id: "refrigerator", name: "Refrigerator", description: "Single / Double Door", icon: "kitchen", price: 1500, hasQuantityOptions: false },
+    { id: "washingMachine", name: "Washing Machine", description: "Top / Front Load", icon: "local_laundry_service", price: 1000, hasQuantityOptions: false },
+    { id: "ac", name: "Air Conditioner", description: "Window / Split", icon: "ac_unit", price: 1100, hasQuantityOptions: false },
+    { id: "cartons", name: "Misc. Cartons", description: "Small items, books, decor", icon: "inventory_2", price: 150, hasQuantityOptions: true },
+];
+
 export default function Inventory() {
-    const [sofaCount, setSofaCount] = useState(1);
-    const [bookshelfCount, setBookshelfCount] = useState(2);
+    // State maps item ID to its selected quantity
+    const [selectedQuantities, setSelectedQuantities] = useState<Record<string, number>>({
+        sofa: 1,
+        bookshelf: 2,
+    });
+
+    const toggleItem = (itemId: string, hasQuantityOptions: boolean) => {
+        setSelectedQuantities(prev => {
+            const currentQty = prev[itemId] || 0;
+            if (currentQty > 0) {
+                // If already selected, deselect it
+                const newState = { ...prev };
+                delete newState[itemId];
+                return newState;
+            } else {
+                // If not selected, select it with quantity 1
+                return { ...prev, [itemId]: 1 };
+            }
+        });
+    };
+
+    const updateQuantity = (itemId: string, change: number) => {
+        setSelectedQuantities(prev => {
+            const currentQty = prev[itemId] || 0;
+            const newQty = Math.max(0, currentQty + change);
+
+            if (newQty === 0) {
+                const newState = { ...prev };
+                delete newState[itemId];
+                return newState;
+            }
+            return { ...prev, [itemId]: newQty };
+        });
+    };
 
     // Calculated values for the quote breakdown
     const basePrice = 8500;
-    const inventoryPrice = (sofaCount * 2500) + (bookshelfCount * 725);
+
+    // Calculate total inventory price dynamically
+    let inventoryPrice = 0;
+    let totalItemsSelected = 0;
+
+    Object.entries(selectedQuantities).forEach(([itemId, qty]) => {
+        const item = inventoryItems.find(i => i.id === itemId);
+        if (item) {
+            inventoryPrice += item.price * qty;
+            totalItemsSelected += qty;
+        }
+    });
+
     const totalEstimate = basePrice + inventoryPrice;
 
     return (
@@ -22,10 +91,13 @@ export default function Inventory() {
                     </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 pb-12">
                     <div className="flex-1">
                         <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 scrollbar-hide">
                             <button className="px-6 py-2.5 rounded-full bg-primary text-secondary text-sm font-medium shadow-lg hover:shadow-xl transition-all whitespace-nowrap cursor-pointer">
+                                All Items
+                            </button>
+                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
                                 Living Room
                             </button>
                             <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
@@ -34,259 +106,78 @@ export default function Inventory() {
                             <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
                                 Kitchen
                             </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Electronics
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Fragile
-                            </button>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 grid-flow-row-dense">
-                            <label className="cursor-pointer relative group md:col-span-2">
-                                <input type="checkbox" className="peer sr-only" checked={sofaCount > 0} onChange={() => { }} />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item peer-checked:border-secondary">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
-                                            <span className="material-icons-outlined text-3xl">chair</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display font-bold text-lg text-secondary">Sofa Set (3 Seater)</h3>
-                                            <p className="text-xs text-secondary mt-1">Includes cushions and upholstery protection</p>
-                                        </div>
-                                    </div>
-                                    <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${sofaCount > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
-                                        <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {sofaCount}</span>
-                                        <div className="flex items-center gap-3">
-                                            <button onClick={(e) => { e.preventDefault(); setSofaCount(Math.max(0, sofaCount - 1)); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">-</button>
-                                            <span className="text-sm font-bold text-secondary">{sofaCount}</span>
-                                            <button onClick={(e) => { e.preventDefault(); setSofaCount(sofaCount + 1); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
+                            {inventoryItems.map((item) => {
+                                const isSelected = (selectedQuantities[item.id] || 0) > 0;
+                                const qty = selectedQuantities[item.id] || 0;
 
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">table_restaurant</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 flex justify-between items-end">
-                                        <div>
-                                            <h3 className="font-display font-semibold text-secondary">Coffee Table</h3>
-                                            <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Glass / Wood</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
+                                // Some items span 2 columns based on original design
+                                const isWide = item.id === 'sofa' || item.id === 'cartons';
+                                const isTall = item.id === 'bookshelf';
 
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">tv</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">TV Unit</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Medium Size</p>
-                                    </div>
-                                </div>
-                            </label>
+                                return (
+                                    <label key={item.id} className={`cursor-pointer relative group ${isWide ? 'md:col-span-2' : ''} ${isTall ? 'md:row-span-2' : ''}`}>
+                                        <input
+                                            type="checkbox"
+                                            className="peer sr-only"
+                                            checked={isSelected}
+                                            onChange={() => toggleItem(item.id, item.hasQuantityOptions)}
+                                        />
+                                        <div className={`h-full bg-primary rounded-xl border p-5 md:p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${isSelected ? 'border-secondary' : 'border-secondary/20'}`}>
 
-                            <label className="cursor-pointer relative group md:row-span-2">
-                                <input type="checkbox" className="peer sr-only" checked={bookshelfCount > 0} onChange={() => { }} />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-6 flex flex-col shadow-sm hover:shadow-md transition-all bento-item peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="w-14 h-14 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
-                                            <span className="material-icons-outlined text-3xl">menu_book</span>
-                                        </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${bookshelfCount > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"}`}>
-                                            <span className={`material-icons-outlined text-sm text-primary ${bookshelfCount > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex-grow">
-                                        <h3 className="font-display font-bold text-lg text-secondary">Bookshelf</h3>
-                                        <p className="text-sm text-secondary mt-2">Standard wooden bookshelf. Please empty contents before packing.</p>
-                                    </div>
-                                    <div className={`mt-6 transition-all duration-300 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 ${bookshelfCount > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
-                                        <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {bookshelfCount}</span>
-                                        <div className="flex items-center gap-3">
-                                            <button onClick={(e) => { e.preventDefault(); setBookshelfCount(Math.max(0, bookshelfCount - 1)); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">-</button>
-                                            <span className="text-sm font-bold text-secondary">{bookshelfCount}</span>
-                                            <button onClick={(e) => { e.preventDefault(); setBookshelfCount(bookshelfCount + 1); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className={`flex items-start gap-4 ${isWide && !isTall ? 'flex-row items-center' : 'flex-col'}`}>
+                                                    <div className={`rounded-lg bg-secondary/5 group-hover:bg-secondary/10 flex items-center justify-center text-secondary group-hover:text-white transition-colors flex-shrink-0 ${item.hasQuantityOptions ? 'w-12 h-12 md:w-14 md:h-14 bg-secondary/10' : 'w-12 h-12'}`}>
+                                                        <span className={`material-icons-outlined ${item.hasQuantityOptions ? 'text-3xl' : 'text-2xl'}`}>{item.icon}</span>
+                                                    </div>
 
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">weekend</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Recliner</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Single Seater</p>
-                                    </div>
-                                </div>
-                            </label>
+                                                    {/* Text Next to icon for Wide Elements */}
+                                                    {isWide && !isTall && (
+                                                        <div>
+                                                            <h3 className={`font-display font-semibold text-secondary text-lg font-bold`}>{item.name}</h3>
+                                                            <p className={`text-xs md:text-sm mt-1 text-secondary`}>{item.description}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
 
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">light</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Floor Lamp</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Fragile</p>
-                                    </div>
-                                </div>
-                            </label>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0 ml-4 ${isSelected ? 'bg-secondary border-secondary' : 'border-secondary/30 group-hover:border-secondary'}`}>
+                                                    <span className={`material-icons-outlined text-sm text-primary ${isSelected ? 'opacity-100' : 'opacity-0'}`}>check</span>
+                                                </div>
+                                            </div>
 
+                                            <div className="flex-grow flex flex-col justify-end">
+                                                {/* Text Below icon for Normal Elements */}
+                                                {!(isWide && !isTall) && (
+                                                    <div className="mb-4">
+                                                        <h3 className={`font-display font-semibold text-secondary ${item.hasQuantityOptions ? 'text-lg font-bold' : ''}`}>{item.name}</h3>
+                                                        <p className={`${item.hasQuantityOptions ? 'text-xs md:text-sm mt-1' : 'text-[10px] uppercase tracking-wide mt-1'} text-secondary`}>{item.description}</p>
+                                                    </div>
+                                                )}
 
-                            <label className="cursor-pointer relative group md:col-span-2">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">bed</span>
+                                                {/* Quantity selector for advanced items */}
+                                                {item.hasQuantityOptions && (
+                                                    <div className={`mt-auto transition-all duration-300 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 ${isSelected ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 delay-100"}`}>
+                                                        <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {qty}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <button
+                                                                onClick={(e) => { e.preventDefault(); updateQuantity(item.id, -1); }}
+                                                                className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm z-10 relative cursor-pointer"
+                                                            >-</button>
+                                                            <span className="text-sm font-bold text-secondary">{qty}</span>
+                                                            <button
+                                                                onClick={(e) => { e.preventDefault(); updateQuantity(item.id, 1); }}
+                                                                className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm z-10 relative cursor-pointer"
+                                                            >+</button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Storage Bed</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">King / Queen</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">checkroom</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Wardrobe</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Almirah</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">restaurant</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Dining Set</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">4/6 Seater</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">kitchen</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Refrigerator</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Single / Double Door</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">local_laundry_service</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Washing Machine</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Top / Front Load</p>
-                                    </div>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">ac_unit</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Air Conditioner</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Window / Split</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group col-span-full">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-8 flex flex-row items-center justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-14 h-14 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">inventory_2</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display font-bold text-lg text-secondary">Misc. Cartons</h3>
-                                            <p className="text-sm text-secondary mt-1">Small items, books, decor</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                        <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                    </div>
-                                </div>
-                            </label>
+                                    </label>
+                                );
+                            })}
                         </div>
 
                         <div className="mt-8 flex justify-center">
@@ -313,11 +204,12 @@ export default function Inventory() {
                                         <span className="font-semibold text-secondary">₹{basePrice.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary/70">Inventory ({sofaCount + bookshelfCount} items)</span>
+                                        <span className="text-secondary/70">Inventory ({totalItemsSelected} items)</span>
                                         <span className="font-semibold text-secondary">₹{inventoryPrice.toLocaleString()}</span>
                                     </div>
                                     <div className="pt-4 border-t border-secondary/10">
                                         <label className="flex items-center gap-3 cursor-pointer group">
+                                            <input type="checkbox" className="peer sr-only" defaultChecked />
                                             <div className="w-5 h-5 rounded border border-secondary/30 flex items-center justify-center group-hover:border-secondary/50 transition-colors peer-checked:bg-secondary">
                                                 <span className="material-icons text-xs text-primary opacity-0 peer-checked:opacity-100">check</span>
                                             </div>
