@@ -1,36 +1,55 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #D4AF37;
-  --color-primary-hover: #C29F2D;
-  --color-secondary: #0B1D3F;
-  --color-oxford-navy: #0B1D3F;
-  --color-cool-grey: #8E9794;
-  --color-background-light: #F8F9FA;
-  --color-background-dark: #0B121C;
-  --color-surface-light: #FFFFFF;
-  --color-surface-dark: #162235;
-  --color-card-light: #FFFFFF;
-  --color-card-dark: #0F264A;
-  --color-champagne-gold: #D4AF37;
-  --color-champagne-light: #F9F3E5;
-  --color-text-light: #333333;
-  --color-text-dark: #E2E8F0;
-  --color-muted-light: #64748B;
-  --color-muted-dark: #94A3B8;
-  --color-accent-gold: #C5A065;
+  --color-primary: #0e1c4f;
+  /* Navy */
+  --color-primary-hover: #0a163d;
+  --color-secondary: #faecc3;
+  /* Cream */
+  --color-cream: #faecc3;
+  --color-navy: #0e1c4f;
+
+  --color-oxford-navy: #0e1c4f;
+  --color-cool-grey: #f3efe8;
+
+  --color-background-light: #f3efe8;
+  --color-background-dark: #0e1c4f;
+  --color-surface-light: #f3efe8;
+  --color-surface-dark: #0e1c4f;
+  --color-card-light: #f3efe8;
+  --color-card-dark: #0e1c4f;
+  --color-champagne-gold: #0e1c4f;
+  --color-champagne-light: #faecc3;
+  --color-text-light: #0e1c4f;
+  --color-text-dark: #faecc3;
+  --color-muted-light: #0e1c4f;
+  --color-muted-dark: #faecc3;
+  --color-accent-gold: #0e1c4f;
 
   --font-display: "Cinzel", serif;
   --font-body: "Inter", sans-serif;
   --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
 
-  --shadow-elegant: 0 4px 20px -2px rgba(11, 29, 63, 0.08);
-  --shadow-gold: 0 4px 20px -2px rgba(212, 175, 55, 0.25);
+  --shadow-elegant: 0 4px 20px -2px rgba(14, 28, 79, 0.1);
+  --shadow-gold: 0 4px 20px -2px rgba(250, 236, 195, 0.1);
 
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-scroll: scroll 25s linear infinite;
+  --animate-marquee: scroll 30s linear infinite;
   --animate-drive: drive 8s linear infinite;
+
+  /* Footer Slide-up Reveal Effect */
+  @keyframes footer-reveal {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 
   @keyframes scroll {
     0% {
@@ -38,7 +57,7 @@
     }
 
     100% {
-      transform: translateX(-100%);
+      transform: translateX(-50%);
     }
   }
 
@@ -51,6 +70,17 @@
       transform: translateX(100vw);
     }
   }
+}
+
+.footer-reveal-container {
+  view-timeline-name: --footer-reveal;
+  view-timeline-axis: block;
+}
+
+.footer-content {
+  animation: footer-reveal linear forwards;
+  animation-timeline: --footer-reveal;
+  animation-range: entry 0% cover 30%;
 }
 
 body {
