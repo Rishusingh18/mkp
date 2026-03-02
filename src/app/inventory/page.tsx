@@ -13,7 +13,7 @@ export default function Inventory() {
     const totalEstimate = basePrice + inventoryPrice;
 
     return (
-        <main className="flex-grow bg-background-light min-h-screen">
+        <main className="flex-grow bg-[#faecc3] min-h-screen">
             <div className="w-full">
                 <div className="px-4 md:px-12 py-12">
                     <h1 className="font-display text-4xl md:text-5xl font-bold text-primary mb-4 text-center">Smart Inventory Grid</h1>
@@ -166,7 +166,7 @@ export default function Inventory() {
                                 </div>
                             </label>
 
-                            
+
                             <label className="cursor-pointer relative group md:col-span-2">
                                 <input type="checkbox" className="peer sr-only" />
                                 <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
