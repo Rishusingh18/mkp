@@ -16,7 +16,7 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        <div className="hidden lg:flex items-center gap-1 bg-secondary/5 p-1 rounded-2xl border border-secondary/10 h-12">
+                        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-secondary/10 h-12">
                             {[
                                 { label: 'Select Route', href: '/' },
                                 { label: 'Inventory', href: '/inventory' },
@@ -25,7 +25,7 @@ export default function Navbar() {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="text-xs md:text-sm font-bold text-secondary/60 hover:text-secondary hover:bg-secondary/10 px-6 h-full flex items-center rounded-xl transition-all"
+                                    className="text-xs md:text-sm font-bold text-secondary/60 hover:text-secondary hover:bg-white/10 px-6 h-full flex items-center rounded-xl transition-all"
                                 >
                                     {item.label}
                                 </Link>
@@ -38,7 +38,7 @@ export default function Navbar() {
                                 <span className="hidden md:inline">Client Portal</span>
                                 <span className="md:hidden">Portal</span>
                             </button>
-                            <button className="lg:hidden text-secondary/80 hover:text-secondary w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl hover:bg-secondary/10 transition-all cursor-pointer">
+                            <button className="lg:hidden text-secondary/80 hover:text-secondary w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all cursor-pointer">
                                 <span className="material-icons-outlined text-2xl">menu</span>
                             </button>
                         </div>
