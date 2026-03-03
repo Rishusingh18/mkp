@@ -10,13 +10,13 @@
   --color-navy: #0e1c4f;
 
   --color-oxford-navy: #0e1c4f;
-  --color-cool-grey: #f3efe8;
+  --color-cool-grey: #F5F2EE;
 
-  --color-background-light: #f3efe8;
+  --color-background-light: #F5F2EE;
   --color-background-dark: #0e1c4f;
-  --color-surface-light: #f3efe8;
+  --color-surface-light: #F5F2EE;
   --color-surface-dark: #0e1c4f;
-  --color-card-light: #f3efe8;
+  --color-card-light: #F5F2EE;
   --color-card-dark: #0e1c4f;
   --color-champagne-gold: #0e1c4f;
   --color-champagne-light: #faecc3;
@@ -116,4 +116,13 @@ body {
 .selection-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+input.peer:checked~div .check-circle {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+input.peer:checked~div .check-circle span {
+  opacity: 1 !important;
 }

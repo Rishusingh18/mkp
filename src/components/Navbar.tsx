@@ -5,11 +5,18 @@ import Link from "next/link";
 import { Search, X, Menu, Lock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
 
     const navItems = [
@@ -17,6 +24,15 @@ export default function Navbar() {
         { label: 'Inventory', href: '/inventory' },
         { label: 'Summary', href: '/summary' }
     ];
+
+    // Effect for scroll handling
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     // Close search on escape
     useEffect(() => {
@@ -35,7 +51,12 @@ export default function Navbar() {
             <motion.div
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="w-[95%] md:w-full max-w-6xl bg-primary/90 border border-secondary/20 rounded-[2.5rem] md:rounded-full shadow-[0_20px_50px_rgba(14,28,79,0.3)] pointer-events-auto backdrop-blur-xl transition-all duration-300 overflow-hidden"
+                className={cn(
+                    "w-[95%] md:w-full max-w-6xl border transition-all duration-300 overflow-hidden pointer-events-auto backdrop-blur-xl",
+                    isScrolled
+                        ? "bg-primary/95 border-secondary/20 rounded-[2rem] shadow-[0_20px_50px_rgba(14,28,79,0.3)]"
+                        : "bg-primary/90 border-secondary/20 rounded-[2.5rem] md:rounded-full shadow-[0_15px_40px_rgba(14,28,79,0.2)]"
+                )}
             >
                 <div className="px-6 md:px-10">
                     <div className="flex justify-between h-16 md:h-20 items-center gap-4">
@@ -56,8 +77,10 @@ export default function Navbar() {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={`relative text-xs md:text-sm font-bold px-6 h-full flex items-center rounded-xl transition-all z-10 ${pathname === item.href ? "text-primary" : "text-secondary/60 hover:text-secondary"
-                                        }`}
+                                    className={cn(
+                                        "relative text-xs md:text-sm font-bold px-6 h-full flex items-center rounded-xl transition-all z-10",
+                                        pathname === item.href ? "text-primary" : "text-secondary/60 hover:text-secondary"
+                                    )}
                                 >
                                     {pathname === item.href && (
                                         <motion.div
@@ -150,8 +173,10 @@ export default function Navbar() {
                                             key={item.href}
                                             href={item.href}
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`flex items-center justify-between py-3 text-lg font-bold border-b border-secondary/5 transition-all ${pathname === item.href ? "text-secondary pl-2" : "text-secondary/60"
-                                                }`}
+                                            className={cn(
+                                                "flex items-center justify-between py-3 text-lg font-bold border-b border-secondary/5 transition-all",
+                                                pathname === item.href ? "text-secondary pl-2" : "text-secondary/60"
+                                            )}
                                         >
                                             {item.label}
                                             <ArrowRight size={18} className={pathname === item.href ? "opacity-100" : "opacity-0"} />

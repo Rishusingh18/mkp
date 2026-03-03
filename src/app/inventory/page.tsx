@@ -50,6 +50,16 @@ const inventoryData = {
     ]
 };
 
+type CustomItem = {
+    id: string;
+    name: string;
+    desc: string;
+    icon: string;
+    price: number;
+    size?: string;
+    isCustom: boolean;
+};
+
 export default function Inventory() {
     const [activeCategory, setActiveCategory] = useState<keyof typeof inventoryData>("Living Room");
     const [selectedItems, setSelectedItems] = useState<Record<string, number>>({
@@ -57,11 +67,18 @@ export default function Inventory() {
         'bookshelf': 2,
     });
 
+    // Custom Items State
+    const [customItems, setCustomItems] = useState<CustomItem[]>([]);
+    const [isCustomMenuOpen, setIsCustomMenuOpen] = useState(false);
+    const [customItemName, setCustomItemName] = useState("");
+
     const categories = Object.keys(inventoryData) as Array<keyof typeof inventoryData>;
 
     const inventoryStats = useMemo(() => {
         let count = 0;
         let price = 0;
+
+        // Count regular items
         Object.entries(selectedItems).forEach(([id, qty]) => {
             if (qty > 0) {
                 for (const catItems of Object.values(inventoryData)) {
@@ -74,8 +91,18 @@ export default function Inventory() {
                 }
             }
         });
+
+        // Count custom items
+        customItems.forEach(item => {
+            const qty = selectedItems[item.id] || 0;
+            if (qty > 0) {
+                count += qty;
+                price += item.price * qty;
+            }
+        });
+
         return { count, price };
-    }, [selectedItems]);
+    }, [selectedItems, customItems]);
 
     const basePrice = 8500;
     const totalEstimate = basePrice + inventoryStats.price;
@@ -85,6 +112,27 @@ export default function Inventory() {
             ...prev,
             [id]: Math.max(0, (prev[id] || 0) + delta)
         }));
+    };
+
+    const handleAddCustomItem = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!customItemName.trim()) return;
+
+        const newItemId = `custom_${Date.now()}`;
+        const newCustomItem: CustomItem = {
+            id: newItemId,
+            name: customItemName,
+            desc: "Custom Item",
+            icon: "category",
+            price: 500,
+            isCustom: true
+        };
+
+        setCustomItems(prev => [...prev, newCustomItem]);
+        setSelectedItems(prev => ({ ...prev, [newItemId]: 1 }));
+
+        setCustomItemName("");
+        setIsCustomMenuOpen(false);
     };
 
     return (
@@ -105,70 +153,134 @@ export default function Inventory() {
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
                                     className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${activeCategory === cat
-                                            ? "bg-primary text-secondary shadow-lg scale-105"
-                                            : "bg-secondary border border-primary/20 text-primary hover:border-primary"
+                                        ? "bg-primary text-secondary shadow-lg scale-105"
+                                        : "bg-secondary border border-primary/20 text-primary hover:border-primary"
                                         }`}
                                 >
                                     {cat}
                                 </button>
                             ))}
+                            {customItems.length > 0 && (
+                                <button
+                                    onClick={() => setActiveCategory("Custom" as any)}
+                                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${activeCategory === ("Custom" as any)
+                                        ? "bg-primary text-secondary shadow-lg scale-105"
+                                        : "bg-secondary border border-primary/20 text-primary hover:border-primary"
+                                        }`}
+                                >
+                                    Custom Items
+                                </button>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                            {inventoryData[activeCategory].map((item) => {
-                                const qty = selectedItems[item.id] || 0;
-                                return (
-                                    <div
-                                        key={item.id}
-                                        className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${item.size === "large" ? "md:col-span-2" :
+                            {activeCategory === ("Custom" as any) ? (
+                                customItems.map((item) => {
+                                    const qty = selectedItems[item.id] || 0;
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                                        <span className="material-icons-outlined text-2xl">{item.icon}</span>
+                                                    </div>
+                                                    <div className="max-w-[180px]">
+                                                        <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
+                                                        <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
+                                                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
+                                                        }`}
+                                                >
+                                                    <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
+                                                </button>
+                                            </div>
+
+                                            <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${qty > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                                                <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {qty}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, -1)}
+                                                        className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="text-sm font-bold text-secondary min-w-[20px] text-center">{qty}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, 1)}
+                                                        className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            ) : (
+                                inventoryData[activeCategory].map((item) => {
+                                    const qty = selectedItems[item.id] || 0;
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${item.size === "large" ? "md:col-span-2" :
                                                 item.size === "tall" ? "md:row-span-2" :
                                                     item.size === "wide" ? "md:col-span-2" : ""
-                                            } ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
-                                                    <span className="material-icons-outlined text-2xl">{item.icon}</span>
+                                                } ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                                        <span className="material-icons-outlined text-2xl">{item.icon}</span>
+                                                    </div>
+                                                    <div className="max-w-[180px]">
+                                                        <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
+                                                        <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="max-w-[180px]">
-                                                    <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
-                                                    <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
-                                                </div>
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
+                                                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
+                                                        }`}
+                                                >
+                                                    <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
+                                                </button>
                                             </div>
-                                            <button
-                                                onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
-                                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
-                                                    }`}
-                                            >
-                                                <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
-                                            </button>
-                                        </div>
 
-                                        <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${qty > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
-                                            <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {qty}</span>
-                                            <div className="flex items-center gap-3">
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, -1)}
-                                                    className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
-                                                >
-                                                    -
-                                                </button>
-                                                <span className="text-sm font-bold text-secondary min-w-[20px] text-center">{qty}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, 1)}
-                                                    className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
-                                                >
-                                                    +
-                                                </button>
+                                            <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${qty > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                                                <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {qty}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, -1)}
+                                                        className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="text-sm font-bold text-secondary min-w-[20px] text-center">{qty}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.id, 1)}
+                                                        className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })
+                            )}
                         </div>
 
                         <div className="mt-12 flex justify-center">
-                            <button className="flex items-center gap-2 text-primary font-bold hover:underline text-sm uppercase tracking-widest cursor-pointer group">
+                            <button
+                                onClick={() => setIsCustomMenuOpen(true)}
+                                className="flex items-center gap-2 text-primary font-bold hover:underline text-sm uppercase tracking-widest cursor-pointer group"
+                            >
                                 <span className="material-icons-outlined text-lg group-hover:rotate-90 transition-transform">add_circle_outline</span>
                                 Can't find an item? Add Custom Item
                             </button>
@@ -196,6 +308,7 @@ export default function Inventory() {
                                     </div>
                                     <div className="pt-4 border-t border-secondary/10">
                                         <label className="flex items-center gap-3 cursor-pointer group">
+                                            <input type="checkbox" className="peer sr-only" defaultChecked />
                                             <div className="w-5 h-5 rounded border border-secondary/30 flex items-center justify-center group-hover:border-secondary/50 transition-colors peer-checked:bg-secondary">
                                                 <span className="material-icons text-xs text-primary opacity-0 peer-checked:opacity-100">check</span>
                                             </div>
@@ -230,6 +343,60 @@ export default function Inventory() {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Item Modal */}
+            {isCustomMenuOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-primary border border-secondary/20 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-fade-in">
+                        <div className="px-6 py-4 border-b border-secondary/10 flex items-center justify-between">
+                            <h3 className="font-display font-bold text-xl text-primary dark:text-secondary">Add Custom Item</h3>
+                            <button
+                                onClick={() => setIsCustomMenuOpen(false)}
+                                className="text-primary/60 dark:text-secondary/60 hover:text-primary dark:hover:text-secondary transition-colors"
+                            >
+                                <span className="material-icons-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <form onSubmit={handleAddCustomItem}>
+                                <div className="mb-4">
+                                    <label htmlFor="customItemName" className="block text-sm font-medium text-primary dark:text-secondary/80 mb-2">
+                                        Item Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="customItemName"
+                                        value={customItemName}
+                                        onChange={(e) => setCustomItemName(e.target.value)}
+                                        className="w-full px-4 py-3 bg-primary/5 dark:bg-black/20 border border-primary/20 dark:border-secondary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-secondary text-primary dark:text-white"
+                                        placeholder="e.g. Grand Piano, Safe, Pool Table..."
+                                        autoFocus
+                                    />
+                                    <p className="text-xs text-primary/60 dark:text-secondary/60 mt-2">
+                                        Added items will use an estimated default volume. A surveyor will confirm exact pricing later.
+                                    </p>
+                                </div>
+                                <div className="flex gap-3 justify-end mt-8">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCustomMenuOpen(false)}
+                                        className="px-5 py-2.5 text-sm font-bold text-primary dark:text-secondary hover:bg-primary/5 dark:hover:bg-white/5 rounded-xl transition-colors cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={!customItemName.trim()}
+                                        className="px-6 py-2.5 text-sm font-bold bg-primary dark:bg-secondary text-white dark:text-primary rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                                    >
+                                        Add Item
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

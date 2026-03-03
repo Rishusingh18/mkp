@@ -39,7 +39,7 @@ export default function Home() {
               <span>Smart Inventory Tracking</span>
             </div>
           </div>
-          <div className="bg-primary/5 border-l-4 border-primary p-4 rounded-r backdrop-blur-sm max-w-md hidden md:block">
+          <div className="bg-white border-l-4 border-primary p-4 rounded-r backdrop-blur-sm max-w-md hidden md:block">
             <p className="text-primary italic text-sm mb-2">"MKP redefined our office move. Zero downtime and impeccable handling of sensitive equipment."</p>
             <p className="text-primary font-semibold text-xs">— CTO, TechGlobal Inc.</p>
           </div>
@@ -200,9 +200,9 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="bg-secondary/50 border-t border-primary/10 py-3 overflow-hidden relative group">
+      <div className="bg-white border-t border-primary/10 py-3 overflow-hidden relative group">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">
-          <span className="text-xs font-bold uppercase text-primary/60 whitespace-nowrap z-10 bg-secondary/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm">Recent Moves:</span>
+          <span className="text-xs font-bold uppercase text-primary/60 whitespace-nowrap z-10 bg-white/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm">Recent Moves:</span>
           <div className="flex gap-8 overflow-hidden relative w-full">
             <div className="flex gap-12 animate-marquee whitespace-nowrap text-sm text-primary items-center">
               {[
