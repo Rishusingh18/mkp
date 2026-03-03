@@ -10,26 +10,28 @@ type InventoryItem = {
     icon: string;
     price: number;
     hasQuantityOptions: boolean;
+    categories: string[];
 };
 
 type CustomItem = InventoryItem & { isCustom: boolean };
 
 const inventoryItems: InventoryItem[] = [
-    { id: "sofa", name: "Sofa Set (3 Seater)", description: "Includes cushions and upholstery protection", icon: "chair", price: 2500, hasQuantityOptions: true },
-    { id: "coffeeTable", name: "Coffee Table", description: "Glass / Wood", icon: "table_restaurant", price: 500, hasQuantityOptions: false },
-    { id: "studyTable", name: "Study / Office Table", description: "Standard wooden or metal desk", icon: "desk", price: 800, hasQuantityOptions: true },
-    { id: "tvUnit", name: "TV Unit", description: "Medium Size", icon: "tv", price: 800, hasQuantityOptions: false },
-    { id: "bookshelf", name: "Bookshelf", description: "Standard wooden bookshelf. Please empty contents before packing.", icon: "menu_book", price: 725, hasQuantityOptions: true },
-    { id: "recliner", name: "Recliner", description: "Single Seater", icon: "weekend", price: 1200, hasQuantityOptions: false },
-    { id: "officeChair", name: "Wooden / Office Chair", description: "Standard non-upholstered or office chair", icon: "chair_alt", price: 400, hasQuantityOptions: true },
-    { id: "floorLamp", name: "Floor Lamp", description: "Fragile", icon: "light", price: 300, hasQuantityOptions: false },
-    { id: "storageBed", name: "Storage Bed", description: "King / Queen", icon: "bed", price: 3500, hasQuantityOptions: false },
-    { id: "wardrobe", name: "Wardrobe", description: "Almirah", icon: "checkroom", price: 2000, hasQuantityOptions: false },
-    { id: "diningSet", name: "Dining Set", description: "4/6 Seater", icon: "restaurant", price: 2200, hasQuantityOptions: false },
-    { id: "refrigerator", name: "Refrigerator", description: "Single / Double Door", icon: "kitchen", price: 1500, hasQuantityOptions: false },
-    { id: "washingMachine", name: "Washing Machine", description: "Top / Front Load", icon: "local_laundry_service", price: 1000, hasQuantityOptions: false },
-    { id: "ac", name: "Air Conditioner", description: "Window / Split", icon: "ac_unit", price: 1100, hasQuantityOptions: false },
-    { id: "cartons", name: "Misc. Cartons", description: "Small items, books, decor", icon: "inventory_2", price: 150, hasQuantityOptions: true },
+    { id: "sofa", name: "Sofa Set (3 Seater)", description: "Includes cushions and upholstery protection", icon: "chair", price: 2500, hasQuantityOptions: true, categories: ['Living Room'] },
+    { id: "coffeeTable", name: "Coffee Table", description: "Glass / Wood", icon: "table_restaurant", price: 500, hasQuantityOptions: true, categories: ['Living Room'] },
+    { id: "studyTable", name: "Study / Office Table", description: "Standard wooden or metal desk", icon: "desk", price: 800, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "tvUnit", name: "TV Unit", description: "Medium Size", icon: "tv", price: 800, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "bookshelf", name: "Bookshelf", description: "Standard wooden bookshelf. Please empty contents before packing.", icon: "menu_book", price: 725, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "recliner", name: "Recliner", description: "Single Seater", icon: "weekend", price: 1200, hasQuantityOptions: true, categories: ['Living Room'] },
+    { id: "officeChair", name: "Wooden / Office Chair", description: "Standard non-upholstered or office chair", icon: "chair_alt", price: 400, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "floorLamp", name: "Floor Lamp", description: "Fragile", icon: "light", price: 300, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "storageBed", name: "Storage Bed", description: "King / Queen", icon: "bed", price: 3500, hasQuantityOptions: true, categories: ['Bedroom'] },
+    { id: "wardrobe", name: "Wardrobe", description: "Almirah", icon: "checkroom", price: 2000, hasQuantityOptions: true, categories: ['Bedroom'] },
+    { id: "diningSet", name: "Dining Set", description: "4/6 Seater", icon: "restaurant", price: 2200, hasQuantityOptions: true, categories: ['Kitchen', 'Living Room'] },
+    { id: "refrigerator", name: "Refrigerator", description: "Single / Double Door", icon: "kitchen", price: 1500, hasQuantityOptions: true, categories: ['Kitchen'] },
+    { id: "washingMachine", name: "Washing Machine", description: "Top / Front Load", icon: "local_laundry_service", price: 1000, hasQuantityOptions: true, categories: ['Kitchen', 'Utility'] },
+    { id: "ac", name: "Air Conditioner", description: "Window / Split", icon: "ac_unit", price: 1100, hasQuantityOptions: true, categories: ['Bedroom', 'Living Room'] },
+    { id: "desktop", name: "Desktop Computer", description: "PC Tower, Monitor & Peripherals", icon: "desktop_windows", price: 600, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom'] },
+    { id: "cartons", name: "Misc. Cartons", description: "Small items, books, decor", icon: "inventory_2", price: 150, hasQuantityOptions: true, categories: ['Living Room', 'Bedroom', 'Kitchen'] },
 ];
 
 export default function Inventory() {
@@ -44,7 +46,17 @@ export default function Inventory() {
     const [isCustomMenuOpen, setIsCustomMenuOpen] = useState(false);
     const [customItemName, setCustomItemName] = useState("");
 
+    // Category Filter State
+    const [selectedCategory, setSelectedCategory] = useState<string>("All Items");
+
     const allItems = [...inventoryItems, ...customItems];
+
+    // Filtered items based on selected category
+    const filteredItems = allItems.filter(item =>
+        selectedCategory === "All Items" ||
+        item.categories?.includes(selectedCategory) ||
+        (item as CustomItem).isCustom // Custom items always show or can be filtered differently if needed
+    );
 
     const handleAddCustomItem = (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,7 +70,8 @@ export default function Inventory() {
             icon: "category", // Generic icon
             price: 500, // Default price for custom items, could be made editable
             hasQuantityOptions: true,
-            isCustom: true
+            isCustom: true,
+            categories: ["Custom"], // Fallback category for custom items
         };
 
         setCustomItems(prev => [...prev, newCustomItem]);
@@ -128,28 +141,29 @@ export default function Inventory() {
                 <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-12 pb-12">
                     <div className="flex-1">
                         <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 scrollbar-hide">
-                            <button className="px-6 py-2.5 rounded-full bg-primary text-secondary text-sm font-medium shadow-lg hover:shadow-xl transition-all whitespace-nowrap cursor-pointer">
-                                All Items
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Living Room
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Bedroom
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Kitchen
-                            </button>
+                            {['All Items', 'Living Room', 'Bedroom', 'Kitchen'].map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${selectedCategory === cat
+                                        ? 'bg-primary text-secondary shadow-lg hover:shadow-xl'
+                                        : 'bg-secondary border border-primary/20 text-primary hover:border-primary hover:text-primary'
+                                        }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 grid-flow-row-dense">
-                            {allItems.map((item) => {
+                            {filteredItems.map((item) => {
                                 const isSelected = (selectedQuantities[item.id] || 0) > 0;
                                 const qty = selectedQuantities[item.id] || 0;
 
                                 // Some items span 2 columns based on original design
+                                // Some items span 2 columns based on original design
                                 const isWide = item.id === 'sofa' || item.id === 'cartons';
-                                const isTall = item.id === 'bookshelf';
+                                const isTall = false;
 
                                 return (
                                     <label key={item.id} className={`cursor-pointer relative group ${isWide ? 'md:col-span-2' : ''} ${isTall ? 'md:row-span-2' : ''}`}>
