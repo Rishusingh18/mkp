@@ -1,11 +1,45 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { Search, X, Menu, Lock, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const pathname = usePathname();
+
+    const navItems = [
+        { label: 'Select Route', href: '/' },
+        { label: 'Inventory', href: '/inventory' },
+        { label: 'Summary', href: '/summary' }
+    ];
+
+    // Close search on escape
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+            }
+        };
+        window.addEventListener("keydown", handleEsc);
+        return () => window.removeEventListener("keydown", handleEsc);
+    }, []);
+
     return (
-        <nav className="fixed top-4 left-0 right-0 z-50 flex justify-center pointer-events-none px-4 md:px-6">
-            <div className="w-full max-w-[1400px] bg-primary border border-secondary/10 rounded-2xl shadow-2xl pointer-events-auto backdrop-blur-md transition-all duration-300">
-                <div className="px-4 md:px-8">
+        <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
+            <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="w-[95%] md:w-full max-w-6xl bg-primary/90 border border-secondary/20 rounded-[2.5rem] md:rounded-full shadow-[0_20px_50px_rgba(14,28,79,0.3)] pointer-events-auto backdrop-blur-xl transition-all duration-300 overflow-hidden"
+            >
+                <div className="px-6 md:px-10">
                     <div className="flex justify-between h-16 md:h-20 items-center gap-4">
+                        {/* Logo Block */}
                         <Link href="/" className="flex items-center gap-3 group shrink-0 h-full">
                             <div className="h-10 w-10 md:h-12 md:w-12 bg-secondary rounded-xl flex items-center justify-center text-primary font-serif font-bold text-xl md:text-2xl group-hover:bg-secondary/95 transition-all shadow-inner shrink-0">
                                 M
@@ -16,35 +50,125 @@ export default function Navbar() {
                             </div>
                         </Link>
 
-                        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-secondary/10 h-12">
-                            {[
-                                { label: 'Select Route', href: '/' },
-                                { label: 'Inventory', href: '/inventory' },
-                                { label: 'Summary', href: '/summary' }
-                            ].map((item) => (
+                        {/* Desktop Nav Items */}
+                        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-secondary/10 h-11 relative">
+                            {navItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="text-xs md:text-sm font-bold text-secondary/60 hover:text-secondary hover:bg-white/10 px-6 h-full flex items-center rounded-xl transition-all"
+                                    className={`relative text-xs md:text-sm font-bold px-6 h-full flex items-center rounded-xl transition-all z-10 ${pathname === item.href ? "text-primary" : "text-secondary/60 hover:text-secondary"
+                                        }`}
                                 >
+                                    {pathname === item.href && (
+                                        <motion.div
+                                            layoutId="nav-pill"
+                                            className="absolute inset-0 bg-secondary rounded-lg -z-10"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
                                     {item.label}
                                 </Link>
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-3 shrink-0 h-full">
-                            <button className="hidden sm:flex bg-secondary hover:bg-secondary/95 text-primary h-10 md:h-12 px-6 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer font-bold text-xs md:text-sm shadow-lg active:scale-95">
-                                <span className="material-icons-outlined text-sm md:text-base">lock_open</span>
-                                <span className="hidden md:inline">Client Portal</span>
-                                <span className="md:hidden">Portal</span>
+                        {/* Action Area */}
+                        <div className="flex items-center gap-2 md:gap-4 shrink-0 h-full">
+                            {/* Search Expansion Logic */}
+                            <div className="hidden sm:flex items-center">
+                                <AnimatePresence mode="wait">
+                                    {isSearchOpen ? (
+                                        <motion.div
+                                            key="search-input"
+                                            initial={{ width: 0, opacity: 0 }}
+                                            animate={{ width: 240, opacity: 1 }}
+                                            exit={{ width: 0, opacity: 0 }}
+                                            className="relative flex items-center bg-white/10 border border-secondary/20 rounded-xl px-2 overflow-hidden h-10 md:h-12"
+                                        >
+                                            <Search size={18} className="text-secondary/50 ml-2 shrink-0" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search route..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="w-full bg-transparent border-none focus:ring-0 px-3 py-2 text-sm text-secondary placeholder-secondary/30 focus:outline-none"
+                                                autoFocus
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    setIsSearchOpen(false);
+                                                    setSearchQuery("");
+                                                }}
+                                                className="p-1 rounded-lg hover:bg-secondary/10 transition-colors text-secondary/50 hover:text-secondary"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.button
+                                            key="search-trigger"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            onClick={() => setIsSearchOpen(true)}
+                                            className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 rounded-xl hover:bg-white/10 transition-all text-secondary/60 hover:text-secondary group"
+                                        >
+                                            <Search size={20} className="group-hover:scale-110 transition-transform" />
+                                        </motion.button>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            <button className="hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-10 md:h-12 px-6 rounded-xl items-center gap-2 transition-all cursor-pointer font-bold text-xs md:text-sm shadow-lg active:scale-95">
+                                <Lock size={16} />
+                                <span>Client Portal</span>
                             </button>
-                            <button className="lg:hidden text-secondary/80 hover:text-secondary w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all cursor-pointer">
-                                <span className="material-icons-outlined text-2xl">menu</span>
+
+                            {/* Mobile Toggle */}
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className="lg:hidden text-secondary/80 hover:text-secondary w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-all cursor-pointer"
+                            >
+                                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                {/* Animated Mobile Menu */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="lg:hidden bg-primary/95 border-t border-secondary/10 overflow-hidden"
+                        >
+                            <div className="px-6 py-8 space-y-6">
+                                <div className="space-y-4">
+                                    {navItems.map((item) => (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={`flex items-center justify-between py-3 text-lg font-bold border-b border-secondary/5 transition-all ${pathname === item.href ? "text-secondary pl-2" : "text-secondary/60"
+                                                }`}
+                                        >
+                                            {item.label}
+                                            <ArrowRight size={18} className={pathname === item.href ? "opacity-100" : "opacity-0"} />
+                                        </Link>
+                                    ))}
+                                </div>
+                                <div className="pt-4">
+                                    <button className="w-full bg-secondary text-primary font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-transform">
+                                        <Lock size={20} />
+                                        Client Portal
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
         </nav>
     );
 }

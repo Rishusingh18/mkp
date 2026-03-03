@@ -1,199 +1,181 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+
+const inventoryData = {
+    "Living Room": [
+        { id: "sofa", name: "Sofa Set (3 Seater)", desc: "Includes cushions and upholstery protection", icon: "chair", price: 2500, size: "large" },
+        { id: "coffee_table", name: "Coffee Table", desc: "Glass / Wood", icon: "table_restaurant", price: 800 },
+        { id: "tv_unit", name: "TV Unit", desc: "Medium Size", icon: "tv", price: 1200 },
+        { id: "bookshelf", name: "Bookshelf", desc: "Standard wooden bookshelf", icon: "menu_book", price: 725, size: "tall" },
+        { id: "recliner", name: "Recliner", desc: "Single Seater", icon: "weekend", price: 1500 },
+        { id: "floor_lamp", name: "Floor Lamp", desc: "Fragile", icon: "light", price: 400 },
+        { id: "misc_cartons_lr", name: "Misc. Cartons", desc: "Small items, books, decor", icon: "inventory_2", price: 200, size: "wide" }
+    ],
+    "Bedroom": [
+        { id: "double_bed", name: "Double Bed", desc: "King/Queen size with mattress", icon: "bed", price: 3500, size: "large" },
+        { id: "wardrobe", name: "Wardrobe", desc: "2-3 Door wooden wardrobe", icon: "door_sliding", price: 2800, size: "tall" },
+        { id: "dressing_table", name: "Dressing Table", desc: "With mirror and stool", icon: "grid_view", price: 1200 },
+        { id: "bedside_table", name: "Bedside Table", desc: "Small 2-drawer unit", icon: "calendar_view_day", price: 400 },
+        { id: "mattress", name: "Extra Mattress", desc: "Single/Double rollable", icon: "layers", price: 600 }
+    ],
+    "Kitchen": [
+        { id: "refrigerator", name: "Refrigerator", desc: "Double door / Single door", icon: "kitchen", price: 2200, size: "tall" },
+        { id: "microwave", name: "Microwave", desc: "Convection / Solo", icon: "settings_input_component", price: 600 },
+        { id: "dining_table", name: "Dining Table", desc: "4-6 Seater with chairs", icon: "table_bar", price: 2500, size: "large" },
+        { id: "gas_stove", name: "Gas Stove/Hob", desc: "2-4 Burner unit", icon: "soup_kitchen", price: 400 },
+        { id: "kitchen_rack", name: "Kitchen Rack", desc: "Steel/Wooden modular rack", icon: "shelves", price: 800 }
+    ],
+    "Electronics": [
+        { id: "washing_machine", name: "Washing Machine", desc: "Front/Top load", icon: "local_laundry_service", price: 1800, size: "large" },
+        { id: "ac_unit", name: "AC Unit", desc: "Split/Window 1.5-2 Ton", icon: "ac_unit", price: 1500 },
+        { id: "desktop_pc", name: "Desktop PC", desc: "Monitor, CPU, UPS, Printer", icon: "desktop_windows", price: 1200 },
+        { id: "home_theatre", name: "Home Theatre", desc: "5.1 Speaker system", icon: "speaker", price: 800 },
+        { id: "air_cooler", name: "Air Cooler", desc: "Desert/Tower cooler", icon: "mode_fan", price: 600 }
+    ],
+    "Fragile": [
+        { id: "mirror_large", name: "Large Mirror", desc: "Wall mounted / Standing", icon: "square", price: 1200, size: "tall" },
+        { id: "glass_cabinet", name: "Glass Cabinet", desc: "Display unit with glass panes", icon: "all_in_box", price: 2200, size: "large" },
+        { id: "flower_vases", name: "Flower Vases", desc: "Set of 3 ceramic vases", icon: "potted_plant", price: 500 },
+        { id: "paintings", name: "Large Paintings", desc: "Framed canvas artworks", icon: "image", price: 1500, size: "wide" },
+        { id: "crockery_set", name: "Crockery Set", desc: "Bone china dinner set 48pcs", icon: "flatware", price: 2000 }
+    ],
+    "Office": [
+        { id: "office_chair", name: "Office Chair", desc: "Ergonomic mesh chair", icon: "event_seat", price: 800 },
+        { id: "study_table", name: "Study Table", desc: "L-shaped / Standard wood", icon: "desk", price: 1800, size: "large" },
+        { id: "file_cabinet", name: "File Cabinet", desc: "3-Drawer metal unit", icon: "folder_open", price: 1200, size: "tall" },
+        { id: "office_printer", name: "Laser Printer", desc: "All-in-one corporate unit", icon: "print", price: 600 },
+        { id: "water_dispenser", name: "Water Dispenser", desc: "Hot/Cold floor standing", icon: "water_drop", price: 500 }
+    ]
+};
 
 export default function Inventory() {
-    const [sofaCount, setSofaCount] = useState(1);
-    const [bookshelfCount, setBookshelfCount] = useState(2);
+    const [activeCategory, setActiveCategory] = useState<keyof typeof inventoryData>("Living Room");
+    const [selectedItems, setSelectedItems] = useState<Record<string, number>>({
+        'sofa': 1,
+        'bookshelf': 2,
+    });
 
-    // Calculated values for the quote breakdown
+    const categories = Object.keys(inventoryData) as Array<keyof typeof inventoryData>;
+
+    const inventoryStats = useMemo(() => {
+        let count = 0;
+        let price = 0;
+        Object.entries(selectedItems).forEach(([id, qty]) => {
+            if (qty > 0) {
+                for (const catItems of Object.values(inventoryData)) {
+                    const item = catItems.find(i => i.id === id);
+                    if (item) {
+                        count += qty;
+                        price += item.price * qty;
+                        break;
+                    }
+                }
+            }
+        });
+        return { count, price };
+    }, [selectedItems]);
+
     const basePrice = 8500;
-    const inventoryPrice = (sofaCount * 2500) + (bookshelfCount * 725);
-    const totalEstimate = basePrice + inventoryPrice;
+    const totalEstimate = basePrice + inventoryStats.price;
+
+    const updateQuantity = (id: string, delta: number) => {
+        setSelectedItems(prev => ({
+            ...prev,
+            [id]: Math.max(0, (prev[id] || 0) + delta)
+        }));
+    };
 
     return (
         <main className="flex-grow bg-background-light min-h-screen">
             <div className="w-full">
                 <div className="px-4 md:px-12 py-12">
-                    <h1 className="font-display text-4xl md:text-5xl font-bold text-primary mb-4 text-center">Smart Inventory Grid</h1>
+                    <h1 className="font-display text-4xl md:text-5xl font-bold text-primary mb-4 text-center uppercase tracking-tight">Smart Inventory Grid</h1>
                     <p className="text-lg text-primary/70 mb-12 text-center max-w-3xl mx-auto">
                         Select the items you wish to relocate. Our AI-driven estimation engine updates your quote in real-time as you build your inventory.
                     </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-12">
                     <div className="flex-1">
                         <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 scrollbar-hide">
-                            <button className="px-6 py-2.5 rounded-full bg-primary text-secondary text-sm font-medium shadow-lg hover:shadow-xl transition-all whitespace-nowrap cursor-pointer">
-                                Living Room
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Bedroom
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Kitchen
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Electronics
-                            </button>
-                            <button className="px-6 py-2.5 rounded-full bg-secondary border border-primary/20 text-primary text-sm font-medium hover:border-primary hover:text-primary transition-all whitespace-nowrap cursor-pointer">
-                                Fragile
-                            </button>
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${activeCategory === cat
+                                            ? "bg-primary text-secondary shadow-lg scale-105"
+                                            : "bg-secondary border border-primary/20 text-primary hover:border-primary"
+                                        }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                            <label className="cursor-pointer relative group md:col-span-2">
-                                <input type="checkbox" className="peer sr-only" checked={sofaCount > 0} onChange={() => { }} />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item peer-checked:border-secondary">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
-                                            <span className="material-icons-outlined text-3xl">chair</span>
+                            {inventoryData[activeCategory].map((item) => {
+                                const qty = selectedItems[item.id] || 0;
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${item.size === "large" ? "md:col-span-2" :
+                                                item.size === "tall" ? "md:row-span-2" :
+                                                    item.size === "wide" ? "md:col-span-2" : ""
+                                            } ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                                    <span className="material-icons-outlined text-2xl">{item.icon}</span>
+                                                </div>
+                                                <div className="max-w-[180px]">
+                                                    <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
+                                                    <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
+                                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
+                                                    }`}
+                                            >
+                                                <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
+                                            </button>
                                         </div>
-                                        <div>
-                                            <h3 className="font-display font-bold text-lg text-secondary">Sofa Set (3 Seater)</h3>
-                                            <p className="text-xs text-secondary mt-1">Includes cushions and upholstery protection</p>
-                                        </div>
-                                    </div>
-                                    <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${sofaCount > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
-                                        <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {sofaCount}</span>
-                                        <div className="flex items-center gap-3">
-                                            <button onClick={(e) => { e.preventDefault(); setSofaCount(Math.max(0, sofaCount - 1)); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">-</button>
-                                            <span className="text-sm font-bold text-secondary">{sofaCount}</span>
-                                            <button onClick={(e) => { e.preventDefault(); setSofaCount(sofaCount + 1); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
 
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">table_restaurant</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4 flex justify-between items-end">
-                                        <div>
-                                            <h3 className="font-display font-semibold text-secondary">Coffee Table</h3>
-                                            <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Glass / Wood</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">tv</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
+                                        <div className={`mt-6 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 transition-all ${qty > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"}`}>
+                                            <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {qty}</span>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, -1)}
+                                                    className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="text-sm font-bold text-secondary min-w-[20px] text-center">{qty}</span>
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, 1)}
+                                                    className="w-8 h-8 flex items-center justify-center text-secondary hover:bg-secondary hover:text-primary transition-colors text-xl font-bold bg-primary/20 rounded shadow-sm cursor-pointer"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">TV Unit</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Medium Size</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group md:row-span-2">
-                                <input type="checkbox" className="peer sr-only" checked={bookshelfCount > 0} onChange={() => { }} />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-6 flex flex-col shadow-sm hover:shadow-md transition-all bento-item peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="w-14 h-14 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
-                                            <span className="material-icons-outlined text-3xl">menu_book</span>
-                                        </div>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${bookshelfCount > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"}`}>
-                                            <span className={`material-icons-outlined text-sm text-primary ${bookshelfCount > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex-grow">
-                                        <h3 className="font-display font-bold text-lg text-secondary">Bookshelf</h3>
-                                        <p className="text-sm text-secondary mt-2">Standard wooden bookshelf. Please empty contents before packing.</p>
-                                    </div>
-                                    <div className={`mt-6 transition-all duration-300 flex items-center justify-between bg-secondary/5 rounded-xl p-3 border border-secondary/10 ${bookshelfCount > 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
-                                        <span className="text-xs font-bold text-secondary uppercase tracking-wider">Qty: {bookshelfCount}</span>
-                                        <div className="flex items-center gap-3">
-                                            <button onClick={(e) => { e.preventDefault(); setBookshelfCount(Math.max(0, bookshelfCount - 1)); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">-</button>
-                                            <span className="text-sm font-bold text-secondary">{bookshelfCount}</span>
-                                            <button onClick={(e) => { e.preventDefault(); setBookshelfCount(bookshelfCount + 1); }} className="w-6 h-6 flex items-center justify-center text-secondary hover:text-white text-xl font-bold bg-primary rounded shadow-sm">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">weekend</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Recliner</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Single Seater</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] peer-checked:border-secondary">
-                                    <div className="flex justify-between items-start">
-                                        <div className="w-12 h-12 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">light</span>
-                                        </div>
-                                        <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                            <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-4">
-                                        <h3 className="font-display font-semibold text-secondary">Floor Lamp</h3>
-                                        <p className="text-[10px] text-secondary uppercase tracking-wide mt-1">Fragile</p>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <label className="cursor-pointer relative group md:col-span-2">
-                                <input type="checkbox" className="peer sr-only" />
-                                <div className="h-full bg-primary rounded-xl border border-secondary/20 p-6 flex flex-row items-center justify-between shadow-sm hover:shadow-md transition-all bento-item peer-checked:border-secondary">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-14 h-14 rounded-lg bg-secondary/5 flex items-center justify-center text-secondary group-hover:text-white transition-colors">
-                                            <span className="material-icons-outlined text-2xl">inventory_2</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display font-bold text-lg text-secondary">Misc. Cartons</h3>
-                                            <p className="text-sm text-secondary mt-1">Small items, books, decor</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-6 h-6 rounded-full border-2 border-secondary/30 flex items-center justify-center check-circle group-hover:border-secondary peer-checked:bg-secondary peer-checked:border-secondary">
-                                        <span className="material-icons-outlined text-sm text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                    </div>
-                                </div>
-                            </label>
+                                );
+                            })}
                         </div>
 
-                        <div className="mt-8 flex justify-center">
-                            <button className="flex items-center gap-2 text-primary font-medium hover:underline text-sm uppercase tracking-widest cursor-pointer">
-                                <span className="material-icons-outlined text-lg">add_circle_outline</span>
+                        <div className="mt-12 flex justify-center">
+                            <button className="flex items-center gap-2 text-primary font-bold hover:underline text-sm uppercase tracking-widest cursor-pointer group">
+                                <span className="material-icons-outlined text-lg group-hover:rotate-90 transition-transform">add_circle_outline</span>
                                 Can't find an item? Add Custom Item
                             </button>
                         </div>
                     </div>
 
-                    <div className="lg:w-96 relative">
+                    <div className="lg:w-96 relative pb-12">
                         <div className="sticky top-24">
                             <div className="bg-primary text-secondary rounded-xl shadow-elegant overflow-hidden border border-primary">
                                 <div className="bg-primary p-6 border-b border-secondary/10">
@@ -209,8 +191,8 @@ export default function Inventory() {
                                         <span className="font-semibold text-secondary">₹{basePrice.toLocaleString()}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-secondary/70">Inventory ({sofaCount + bookshelfCount} items)</span>
-                                        <span className="font-semibold text-secondary">₹{inventoryPrice.toLocaleString()}</span>
+                                        <span className="text-secondary/70">Inventory ({inventoryStats.count} items)</span>
+                                        <span className="font-semibold text-secondary">₹{inventoryStats.price.toLocaleString()}</span>
                                     </div>
                                     <div className="pt-4 border-t border-secondary/10">
                                         <label className="flex items-center gap-3 cursor-pointer group">

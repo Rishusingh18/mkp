@@ -156,6 +156,49 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <section className="bg-background-light py-20 border-t border-primary/5">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-center font-display text-4xl text-primary mb-16 font-bold">How MKP Packers and Movers Works?</h2>
+
+          <div className="relative space-y-12">
+            {/* Vertical Connector */}
+            <div className="absolute left-8 top-8 bottom-8 w-0.5 border-l-2 border-dashed border-primary/20 z-0"></div>
+
+            {[
+              {
+                icon: 'list_alt',
+                title: 'Share your Shifting Requirement',
+                desc: 'Detail your move and pick a date. Our team maps out the fastest routes to navigate traffic efficiently.'
+              },
+              {
+                icon: 'payments',
+                title: 'Receive Free Instant Quote',
+                desc: 'Receive an instant, comprehensive quote with zero hidden charges. We provide the most transparent pricing for all shifts.'
+              },
+              {
+                icon: 'support_agent',
+                title: 'Assign Quality Service Expert',
+                desc: 'A dedicated relocation manager will oversee your booking, coordinating everything from start to finish.'
+              },
+              {
+                icon: 'local_shipping',
+                title: 'Leave the Heavy Lifting to Us',
+                desc: 'Our trained staff uses high-grade packing materials to ensure your valuables stay safe while travelling.'
+              },
+            ].map((step, i) => (
+              <div key={i} className="relative z-10 flex items-start gap-8 group">
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-lg border-2 border-secondary/20 group-hover:scale-110 transition-transform duration-300">
+                  <span className="material-icons text-secondary text-2xl">{step.icon}</span>
+                </div>
+                <div className="pt-3">
+                  <h3 className="font-display text-xl font-bold text-primary mb-2">{step.title}</h3>
+                  <p className="text-primary/70 leading-relaxed text-sm md:text-base">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <div className="bg-secondary/50 border-t border-primary/10 py-3 overflow-hidden relative group">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-4">

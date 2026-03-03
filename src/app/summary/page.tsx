@@ -173,8 +173,8 @@ export default function Summary() {
                 <div className="relative w-full overflow-hidden bg-white/50 dark:bg-white/5 py-8 rounded-xl backdrop-blur-sm">
                     <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-background-light dark:from-background-dark to-transparent z-10"></div>
                     <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent z-10"></div>
-                    <div className="flex w-[200%] animate-scroll">
-                        <div className="flex justify-around items-center w-full px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                    <div className="flex w-max animate-marquee">
+                        <div className="flex justify-around items-center min-w-full px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
                             <span className="text-xl font-bold font-serif text-primary dark:text-slate-400">Acme Corp</span>
                             <span className="text-xl font-bold font-sans text-primary dark:text-slate-400 flex items-center gap-1"><span className="material-icons-outlined">token</span> Vertex</span>
                             <span className="text-xl font-bold font-serif italic text-primary dark:text-slate-400">Globex</span>
@@ -182,7 +182,7 @@ export default function Summary() {
                             <span className="text-xl font-bold font-serif text-primary dark:text-slate-400">Initech</span>
                             <span className="text-xl font-bold font-sans text-primary dark:text-slate-400">Umbrella</span>
                         </div>
-                        <div className="flex justify-around items-center w-full px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                        <div className="flex justify-around items-center min-w-full px-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
                             <span className="text-xl font-bold font-serif text-primary dark:text-slate-400">Acme Corp</span>
                             <span className="text-xl font-bold font-sans text-primary dark:text-slate-400 flex items-center gap-1"><span className="material-icons-outlined">token</span> Vertex</span>
                             <span className="text-xl font-bold font-serif italic text-primary dark:text-slate-400">Globex</span>
