@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import AuthModal from "./AuthModal";
+import { supabase } from "@/lib/supabase";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -17,6 +19,8 @@ export default function Navbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [user, setUser] = useState<any>(null);
     const pathname = usePathname();
 
     const navItems = [
@@ -24,6 +28,21 @@ export default function Navbar() {
         { label: 'Inventory', href: '/inventory' },
         { label: 'Summary', href: '/summary' }
     ];
+
+    // Auth State Handling
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+        };
+        checkUser();
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => authListener.subscription.unsubscribe();
+    }, []);
 
     // Effect for scroll handling
     useEffect(() => {
@@ -45,6 +64,10 @@ export default function Navbar() {
         window.addEventListener("keydown", handleEsc);
         return () => window.removeEventListener("keydown", handleEsc);
     }, []);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+    };
 
     return (
         <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
@@ -141,10 +164,29 @@ export default function Navbar() {
                                 </AnimatePresence>
                             </div>
 
-                            <button className="hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-10 md:h-12 px-6 rounded-xl items-center gap-2 transition-all cursor-pointer font-bold text-xs md:text-sm shadow-lg active:scale-95">
-                                <Lock size={16} />
-                                <span>Client Portal</span>
-                            </button>
+                            {user ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="hidden md:flex flex-col items-end mr-2">
+                                        <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest">Active Member</span>
+                                        <span className="text-secondary font-display font-bold text-sm">+{user.phone?.slice(-10)}</span>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="bg-white/10 hover:bg-white/20 text-secondary h-10 md:h-12 w-10 md:w-12 rounded-xl flex items-center justify-center transition-all cursor-pointer group shadow-lg"
+                                        title="Logout"
+                                    >
+                                        <X size={18} className="group-hover:scale-110 transition-transform" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => setIsAuthModalOpen(true)}
+                                    className="hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-10 md:h-12 px-6 rounded-xl items-center gap-2 transition-all cursor-pointer font-bold text-xs md:text-sm shadow-lg active:scale-95"
+                                >
+                                    <Lock size={16} />
+                                    <span>Client Portal</span>
+                                </button>
+                            )}
 
                             {/* Mobile Toggle */}
                             <button
@@ -184,16 +226,48 @@ export default function Navbar() {
                                     ))}
                                 </div>
                                 <div className="pt-4">
-                                    <button className="w-full bg-secondary text-primary font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-transform">
-                                        <Lock size={20} />
-                                        Client Portal
-                                    </button>
+                                    {user ? (
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-secondary/10">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest leading-none mb-1">Authenticated</span>
+                                                    <span className="text-secondary font-display font-bold text-lg leading-none">+{user.phone?.slice(-10)}</span>
+                                                </div>
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="p-3 bg-secondary/10 hover:bg-secondary/20 text-secondary rounded-xl transition-all"
+                                                >
+                                                    <X size={20} />
+                                                </button>
+                                            </div>
+                                            <button className="w-full bg-secondary text-primary font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-all">
+                                                Manage Dashboard
+                                                <ArrowRight size={18} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => {
+                                                setIsAuthModalOpen(true);
+                                                setIsMobileMenuOpen(false);
+                                            }}
+                                            className="w-full bg-secondary text-primary font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-transform"
+                                        >
+                                            <Lock size={20} />
+                                            Client Portal
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </motion.div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+            />
         </nav>
     );
 }

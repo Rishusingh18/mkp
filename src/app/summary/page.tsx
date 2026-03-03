@@ -1,9 +1,99 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { leadService, LeadData } from "@/services/leadService";
 
 export default function Summary() {
+    const [lead, setLead] = useState<LeadData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [confirming, setConfirming] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        console.log("Summary page mounted, checking leadId...");
+        const fetchLead = async () => {
+            const leadId = localStorage.getItem("current_lead_id");
+            console.log("leadId from localStorage:", leadId);
+
+            if (!leadId) {
+                console.log("No leadId found.");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                console.log("Fetching lead data for ID:", leadId);
+                const currentLead = await leadService.getLeadById(leadId);
+                console.log("Lead data received:", currentLead);
+                if (currentLead) {
+                    setLead(currentLead);
+                    console.log("Lead state updated with fetched data.");
+                } else {
+                    console.log("Lead not found in database.");
+                }
+            } catch (err) {
+                console.error("Error fetching lead:", err);
+            } finally {
+                setLoading(false);
+                console.log("Lead fetching process finished.");
+            }
+        };
+
+        fetchLead();
+    }, [router]);
+
+    const handleConfirmBooking = async () => {
+        if (!lead?.id) return;
+        setConfirming(true);
+        try {
+            console.log(`Attempting to confirm booking for lead ID: ${lead.id}`);
+            await leadService.updateLead(lead.id, { status: 'confirmed' });
+            console.log("Booking successfully confirmed.");
+            alert("Booking Confirmed! Our representative will contact you shortly.");
+            // Optionally redirect to a dashboard
+        } catch (err) {
+            console.error("Error confirming booking:", err);
+            alert("Failed to confirm booking. Please try again.");
+        } finally {
+            setConfirming(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex-grow flex items-center justify-center bg-background-light dark:bg-background-dark min-h-[60vh]">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary dark:border-secondary"></div>
+                    <p className="text-primary dark:text-secondary/60 text-sm font-medium animate-pulse">Loading relocation details...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!lead) {
+        return (
+            <div className="flex-grow flex items-center justify-center bg-background-light dark:bg-background-dark py-20 px-4">
+                <div className="max-w-md w-full text-center space-y-6 bg-white dark:bg-primary/50 p-8 rounded-3xl border border-primary/10 shadow-xl">
+                    <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="material-icons-outlined text-4xl text-primary/40">search_off</span>
+                    </div>
+                    <h2 className="text-2xl font-serif font-bold text-primary dark:text-secondary">No Active Relocation</h2>
+                    <p className="text-primary/60 dark:text-secondary/60">
+                        We couldn&apos;t find an active relocation request for your session. Please start a new request from the home page.
+                    </p>
+                    <button
+                        onClick={() => router.push('/')}
+                        className="w-full py-4 bg-primary text-secondary rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                    >
+                        <span className="material-icons-outlined">home</span>
+                        Return to Home
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <main className="flex-grow z-10 py-12 px-4 sm:px-6 lg:px-8 bg-background-light relative">
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2760%27%20height%3D%2760%27%20viewBox%3D%270%200%2060%2060%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cg%20fill%3D%27none%27%20fill-rule%3D%27evenodd%27%3E%3Cg%20fill%3D%27%230e1c4f%27%3E%3Cpath%20d%3D%27M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%27%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')]"></div>
@@ -12,9 +102,9 @@ export default function Summary() {
                     <div className="bg-primary rounded-xl shadow-sm border border-secondary/20 p-6">
                         <div className="flex items-center justify-between mb-2">
                             <h1 className="text-2xl font-serif text-secondary font-semibold">Booking Summary</h1>
-                            <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider">Quote Finalized</span>
+                            <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider">{lead.status === 'confirmed' ? 'Confirmed' : 'Quote Finalized'}</span>
                         </div>
-                        <p className="text-secondary/80 text-sm">Reference ID: #MKP-2023-8921</p>
+                        <p className="text-secondary/80 text-sm">Reference ID: #MKP-LD-{lead.id?.slice(0, 8).toUpperCase()}</p>
                         <div className="mt-6 flex items-center relative">
                             <div className="absolute w-full h-1 bg-secondary/20 top-1/2 transform -translate-y-1/2 z-0"></div>
                             <div className="relative z-10 w-full flex justify-between">
@@ -31,8 +121,8 @@ export default function Summary() {
                                     <span className="text-xs mt-2 font-medium text-secondary">Quote</span>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <div className="w-8 h-8 bg-primary text-secondary/30 rounded-full flex items-center justify-center text-sm font-bold border-4 border-primary">4</div>
-                                    <span className="text-xs mt-2 font-bold text-secondary/30">Confirm</span>
+                                    <div className={`w-8 h-8 ${lead.status === 'confirmed' ? 'bg-secondary text-primary' : 'bg-primary text-secondary/30'} rounded-full flex items-center justify-center text-sm font-bold border-4 border-primary`}>4</div>
+                                    <span className={`text-xs mt-2 font-bold ${lead.status === 'confirmed' ? 'text-secondary' : 'text-secondary/30'}`}>Confirm</span>
                                 </div>
                             </div>
                         </div>
@@ -52,16 +142,13 @@ export default function Summary() {
                                     <div className="flex items-start gap-3">
                                         <span className="w-3 h-3 rounded-full border-2 border-secondary mt-1.5 flex-shrink-0"></span>
                                         <div>
-                                            <p className="text-xl font-serif font-medium text-secondary">New York, NY</p>
-                                            <p className="text-sm text-secondary/80">1200 Corporate Blvd, Suite 400<br />NY 10019</p>
-                                            <div className="mt-2 inline-flex items-center gap-1 text-xs text-primary bg-secondary px-2 py-1 rounded">
-                                                <span className="material-icons-outlined text-xs">elevator</span> Elevator Access
-                                            </div>
+                                            <p className="text-xl font-serif font-medium text-secondary">{lead.pickup_city}</p>
+                                            <p className="text-sm text-secondary/80">Corporate Office Pickup</p>
                                         </div>
                                     </div>
                                     <div className="pl-6 pt-2">
                                         <p className="text-sm font-medium text-secondary">Pickup Date</p>
-                                        <p className="text-sm text-secondary/80">Oct 24, 2023 • 09:00 AM</p>
+                                        <p className="text-sm text-secondary/80">{new Date(lead.moving_date).toLocaleDateString()} • 09:00 AM</p>
                                     </div>
                                 </div>
                                 <div className="flex-1 space-y-3 md:pl-12">
@@ -69,36 +156,29 @@ export default function Summary() {
                                     <div className="flex items-start gap-3">
                                         <span className="w-3 h-3 rounded-full bg-secondary mt-1.5 flex-shrink-0"></span>
                                         <div>
-                                            <p className="text-xl font-serif font-medium text-secondary">San Francisco, CA</p>
-                                            <p className="text-sm text-secondary/80">450 Tech Plaza, Floor 12<br />CA 94107</p>
-                                            <div className="mt-2 inline-flex items-center gap-1 text-xs text-primary bg-secondary px-2 py-1 rounded">
-                                                <span className="material-icons-outlined text-xs">straighten</span> Long Carry
-                                            </div>
+                                            <p className="text-xl font-serif font-medium text-secondary">{lead.destination_city}</p>
+                                            <p className="text-sm text-secondary/80">Corporate Office Delivery</p>
                                         </div>
                                     </div>
                                     <div className="pl-6 pt-2">
-                                        <p className="text-sm font-medium text-secondary">Delivery Estimate</p>
-                                        <p className="text-sm text-secondary/80">Oct 29 - Oct 31, 2023</p>
+                                        <p className="text-sm font-medium text-secondary">Relocation Type</p>
+                                        <p className="text-sm text-secondary/80 uppercase tracking-widest">{lead.shift_type} Relocation</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="bg-secondary/10 p-6 border-t border-secondary/10">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-sm text-secondary">Base Relocation Cost</span>
-                                <span className="text-sm font-medium text-secondary">$4,250.00</span>
-                            </div>
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-sm text-secondary">Insurance (Full Value Protection)</span>
-                                <span className="text-sm font-medium text-secondary">$350.00</span>
+                                <span className="text-sm text-secondary">Inventory Items ({lead.items?.length || 0})</span>
+                                <span className="text-sm font-medium text-secondary">View Details</span>
                             </div>
                             <div className="flex justify-between items-center mb-4">
-                                <span className="text-sm text-secondary">Corporate Discount (10%)</span>
-                                <span className="text-sm font-medium text-secondary">-$460.00</span>
+                                <span className="text-sm text-secondary">Base Estimate (Volume based)</span>
+                                <span className="text-sm font-medium text-secondary">₹{lead.total_estimate?.toLocaleString()}</span>
                             </div>
                             <div className="border-t border-secondary/20 pt-4 flex justify-between items-center">
-                                <span className="font-serif font-bold text-secondary text-lg">Total Estimate</span>
-                                <span className="font-serif font-bold text-secondary text-2xl">$4,140.00</span>
+                                <span className="font-serif font-bold text-secondary text-lg">Total Quote</span>
+                                <span className="font-serif font-bold text-secondary text-2xl">₹{lead.total_estimate?.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -159,9 +239,13 @@ export default function Summary() {
                     </div>
 
                     <div className="sticky bottom-6">
-                        <button className="w-full bg-primary hover:bg-primary/90 text-secondary font-bold text-lg py-4 px-6 rounded-xl shadow-elegant transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-secondary/20">
-                            Confirm Booking
-                            <span className="material-icons-outlined">arrow_forward</span>
+                        <button
+                            onClick={handleConfirmBooking}
+                            disabled={confirming || lead.status === 'confirmed'}
+                            className="w-full bg-primary hover:bg-primary/90 text-secondary font-bold text-lg py-4 px-6 rounded-xl shadow-elegant transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-secondary/20 disabled:opacity-70"
+                        >
+                            {confirming ? "Processing..." : lead.status === 'confirmed' ? "Booking Confirmed" : "Confirm Booking"}
+                            {!confirming && lead.status !== 'confirmed' && <span className="material-icons-outlined">arrow_forward</span>}
                         </button>
                         <p className="text-center text-xs text-secondary mt-3">By confirming, you agree to MKP Terms of Service.</p>
                     </div>

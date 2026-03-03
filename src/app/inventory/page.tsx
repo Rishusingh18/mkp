@@ -60,12 +60,50 @@ type CustomItem = {
     isCustom: boolean;
 };
 
+import { useRouter } from "next/navigation";
+import { leadService } from "@/services/leadService";
+
 export default function Inventory() {
     const [activeCategory, setActiveCategory] = useState<keyof typeof inventoryData>("Living Room");
     const [selectedItems, setSelectedItems] = useState<Record<string, number>>({
         'sofa': 1,
         'bookshelf': 2,
     });
+
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    // ... (rest of state and functions)
+
+    const handleProceedToSummary = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        const leadId = localStorage.getItem("current_lead_id");
+        if (!leadId) {
+            router.push("/");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Transform selectedItems to a simple array or keep as object
+            const itemsArray = Object.entries(selectedItems)
+                .filter(([_, qty]) => qty > 0)
+                .map(([id, qty]) => ({ id, qty }));
+
+            await leadService.updateLead(leadId, {
+                items: itemsArray,
+                total_estimate: totalEstimate,
+                status: 'inventory_mapped'
+            });
+
+            router.push("/summary");
+        } catch (err: any) {
+            console.error("Error updating lead inventory:", err);
+            alert("Failed to save inventory. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Custom Items State
     const [customItems, setCustomItems] = useState<CustomItem[]>([]);
@@ -322,10 +360,14 @@ export default function Inventory() {
                                         <span className="font-display text-2xl font-bold text-secondary">₹{totalEstimate.toLocaleString()}</span>
                                     </div>
                                     <p className="text-[10px] text-secondary/70 text-right mb-6">*Tax excluded</p>
-                                    <Link href="/summary" className="w-full py-4 bg-secondary hover:bg-secondary/90 text-primary font-bold rounded-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
-                                        Proceed to Packaging
-                                        <span className="material-icons-outlined">arrow_forward</span>
-                                    </Link>
+                                    <button
+                                        onClick={handleProceedToSummary}
+                                        disabled={loading}
+                                        className="w-full py-4 bg-secondary hover:bg-secondary/95 text-primary font-bold rounded-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70"
+                                    >
+                                        {loading ? "Saving..." : "Proceed to Packaging"}
+                                        {!loading && <span className="material-icons-outlined">arrow_forward</span>}
+                                    </button>
                                 </div>
                             </div>
 

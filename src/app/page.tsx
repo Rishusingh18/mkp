@@ -1,13 +1,79 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { leadService } from "@/services/leadService";
+import { supabase } from "@/lib/supabase";
+import AuthModal from "@/components/AuthModal";
 
 export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
+  const [source, setSource] = useState("");
+  const [destination, setDestination] = useState("");
+  const [date, setDate] = useState("");
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => authListener.subscription.unsubscribe();
+  }, []);
+
+  const handleProceed = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!source || !destination || !date) {
+      alert("Please fill in all the details.");
+      return;
+    }
+
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const lead = await leadService.createLead({
+        user_id: user.id,
+        pickup_city: source,
+        destination_city: destination,
+        moving_date: date,
+        shift_type: shiftType,
+        total_estimate: 0, // Initial estimate
+      });
+
+      // Store lead ID for the next steps
+      localStorage.setItem("current_lead_id", lead.id);
+      router.push("/inventory");
+    } catch (err: any) {
+      console.error("Error creating lead:", err);
+      alert("Failed to initiate relocation. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="flex-grow relative bg-background-light">
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(u) => {
+          setUser(u);
+          setIsAuthModalOpen(false);
+          // We don't auto-handleProceed here to avoid side effects, user clicks again or we could trigger it.
+        }}
+      />
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-primary opacity-5 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-primary opacity-5 blur-3xl"></div>
@@ -100,7 +166,14 @@ export default function Home() {
                   <div className="absolute left-3 top-3.5 flex items-center justify-center">
                     <div className="w-2.5 h-2.5 rounded-full border-2 border-secondary bg-primary"></div>
                   </div>
-                  <input type="text" id="source" className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none" placeholder="Origin Location (City, Area)" />
+                  <input
+                    type="text"
+                    id="source"
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none"
+                    placeholder="Origin Location (City, Area)"
+                  />
                 </div>
 
                 <div className="relative z-10 group">
@@ -108,7 +181,14 @@ export default function Home() {
                   <div className="absolute left-3 top-3.5 flex items-center justify-center">
                     <div className="w-2.5 h-2.5 rounded-full bg-secondary"></div>
                   </div>
-                  <input type="text" id="destination" className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none" placeholder="Destination Location (City, Area)" />
+                  <input
+                    type="text"
+                    id="destination"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none"
+                    placeholder="Destination Location (City, Area)"
+                  />
                 </div>
               </div>
 
@@ -118,14 +198,24 @@ export default function Home() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span className="material-icons text-secondary/40 text-lg">calendar_today</span>
                   </div>
-                  <input type="date" className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary shadow-sm outline-none" style={{ colorScheme: "dark" }} />
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary shadow-sm outline-none"
+                    style={{ colorScheme: "dark" }}
+                  />
                 </div>
               </div>
 
-              <Link href="/inventory" className="w-full mt-4 bg-secondary hover:bg-secondary/90 text-primary font-bold py-4 px-4 rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
-                <span>Proceed to Estimate</span>
-                <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </Link>
+              <button
+                onClick={handleProceed}
+                disabled={loading}
+                className="w-full mt-4 bg-secondary hover:bg-secondary/90 text-primary font-bold py-4 px-4 rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group disabled:opacity-70"
+              >
+                <span>{loading ? "Processing..." : "Proceed to Estimate"}</span>
+                {!loading && <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>}
+              </button>
             </div>
 
             <div className="mt-6 text-center">
