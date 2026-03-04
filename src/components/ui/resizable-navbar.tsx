@@ -62,7 +62,7 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
                 borderColor,
                 boxShadow,
             }}
-            className={cn("flex items-center justify-between h-16 md:h-18 px-6 md:px-10 border pointer-events-auto backdrop-blur-xl transition-all duration-300", className)}
+            className={cn("flex items-center justify-between h-14 md:h-16 px-6 md:px-8 border pointer-events-auto backdrop-blur-xl transition-all duration-300", className)}
         >
             {children}
         </motion.div>
@@ -73,7 +73,7 @@ export const NavItems = ({ items }: { items: { label: string; href: string }[] }
     const pathname = usePathname();
 
     return (
-        <div className="hidden lg:flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-secondary/10 h-11 relative">
+        <div className="hidden lg:flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-secondary/10 h-9 relative">
             <AnimatePresence>
                 {items.map((item) => {
                     const isActive = pathname === item.href;
@@ -114,7 +114,7 @@ export const NavbarButton = ({ children, onClick, className }: { children: React
     return (
         <button
             onClick={onClick}
-            className={cn("hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-12 px-6 rounded-xl items-center gap-2 transition-transform cursor-pointer font-bold text-sm shadow-lg active:scale-95", className)}
+            className={cn("hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-10 px-5 rounded-xl items-center gap-2 transition-transform cursor-pointer font-bold text-sm shadow-lg active:scale-95", className)}
         >
             {children}
         </button>
