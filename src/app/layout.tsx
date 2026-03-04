@@ -38,7 +38,9 @@ export default function RootLayout({
         className={`${inter.variable} ${cinzel.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}
       >
         <Navbar />
-        {children}
+        <main className="flex-1 mt-24 flex flex-col">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
