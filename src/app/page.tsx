@@ -6,7 +6,8 @@ import { leadService } from "@/services/leadService";
 import { supabase } from "@/lib/supabase";
 import AuthModal from "@/components/AuthModal";
 import CustomDatePicker from "@/components/CustomDatePicker";
-import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { Calendar as CalendarIcon, ChevronDown, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -170,36 +171,30 @@ export default function Home() {
             </div>
 
             <div className="space-y-5">
-              <div className="relative">
-                <div className="absolute left-4 top-10 bottom-10 w-0.5 border-l-2 border-dashed border-secondary/20 z-0"></div>
+              <div className="space-y-4 relative">
+                <div className="absolute left-[20px] top-8 bottom-8 w-0.5 border-l-2 border-dashed border-secondary/10 z-0"></div>
 
-                <div className="relative z-10 mb-4 group">
-                  <label htmlFor="source" className="sr-only">Move From</label>
-                  <div className="absolute left-3 top-3.5 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full border-2 border-secondary bg-primary"></div>
-                  </div>
-                  <input
-                    type="text"
+                <div className="relative z-10 transition-all duration-300">
+                  <LocationAutocomplete
                     id="source"
                     value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none"
+                    onChange={setSource}
                     placeholder="Origin Location (City, Area)"
+                    icon={
+                      <div className="w-4 h-4 rounded-full border-2 border-secondary bg-primary shadow-[0_0_10px_rgba(255,255,255,0.2)]"></div>
+                    }
                   />
                 </div>
 
-                <div className="relative z-10 group">
-                  <label htmlFor="destination" className="sr-only">Move To</label>
-                  <div className="absolute left-3 top-3.5 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-secondary"></div>
-                  </div>
-                  <input
-                    type="text"
+                <div className="relative z-10 transition-all duration-300">
+                  <LocationAutocomplete
                     id="destination"
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary transition-shadow shadow-sm outline-none"
+                    onChange={setDestination}
                     placeholder="Destination Location (City, Area)"
+                    icon={
+                      <div className="w-4 h-4 rounded-full bg-secondary shadow-[0_0_10px_rgba(212,175,55,0.4)]"></div>
+                    }
                   />
                 </div>
               </div>
