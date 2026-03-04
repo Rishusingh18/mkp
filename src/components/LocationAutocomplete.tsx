@@ -203,43 +203,70 @@ export default function LocationAutocomplete({
                                     <p className="text-xs text-secondary/40 font-medium">Searching custom locations...</p>
                                 </div>
                             ) : suggestions.length > 0 ? (
-                                suggestions.map((loc, index) => {
-                                    const { address, display_name } = loc;
-                                    const mainName = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
-                                    const secondaryParts = [address.city || address.town, address.state, address.country]
-                                        .filter(Boolean)
-                                        .filter(part => part !== mainName);
-                                    const secondaryName = Array.from(new Set(secondaryParts)).join(', ');
+                                <>
+                                    {suggestions.map((loc, index) => {
+                                        const { address, display_name } = loc;
+                                        const mainName = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
+                                        const secondaryParts = [address.city || address.town, address.state, address.country]
+                                            .filter(Boolean)
+                                            .filter(part => part !== mainName);
+                                        const secondaryName = Array.from(new Set(secondaryParts)).join(', ');
 
-                                    return (
-                                        <div
-                                            key={`${loc.lat}-${loc.lon}-${index}`}
-                                            onClick={() => selectLocation(loc)}
-                                            onMouseEnter={() => setHighlightedIndex(index)}
-                                            className={cn(
-                                                "flex items-start gap-4 px-4 py-3.5 cursor-pointer transition-all duration-200",
-                                                highlightedIndex === index ? "bg-secondary/10" : "hover:bg-secondary/5"
-                                            )}
-                                        >
-                                            <div className="mt-0.5 w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/40 group-hover:text-secondary/60 transition-colors">
-                                                <Navigation size={14} className={cn(highlightedIndex === index && "text-secondary/80")} />
+                                        return (
+                                            <div
+                                                key={`${loc.lat}-${loc.lon}-${index}`}
+                                                onClick={() => selectLocation(loc)}
+                                                onMouseEnter={() => setHighlightedIndex(index)}
+                                                className={cn(
+                                                    "flex items-start gap-4 px-4 py-3.5 cursor-pointer transition-all duration-200",
+                                                    highlightedIndex === index ? "bg-secondary/10" : "hover:bg-secondary/5"
+                                                )}
+                                            >
+                                                <div className="mt-0.5 w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/40 group-hover:text-secondary/60 transition-colors">
+                                                    <Navigation size={14} className={cn(highlightedIndex === index && "text-secondary/80")} />
+                                                </div>
+                                                <div className="flex flex-col flex-1 overflow-hidden">
+                                                    <span className="text-sm font-bold text-secondary tracking-tight truncate">
+                                                        {highlightMatch(mainName, value)}
+                                                    </span>
+                                                    <span className="text-[11px] text-secondary/40 font-medium truncate mt-0.5">
+                                                        {secondaryName}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col flex-1 overflow-hidden">
-                                                <span className="text-sm font-bold text-secondary tracking-tight truncate">
-                                                    {highlightMatch(mainName, value)}
-                                                </span>
-                                                <span className="text-[11px] text-secondary/40 font-medium truncate mt-0.5">
-                                                    {secondaryName}
-                                                </span>
-                                            </div>
+                                        );
+                                    })}
+                                    <div
+                                        onClick={() => { onChange(value); setIsOpen(false); }}
+                                        className="mt-1 border-t border-secondary/5 flex items-center gap-4 px-4 py-3.5 cursor-pointer hover:bg-secondary/5 transition-all duration-200 group"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/40 group-hover:text-secondary/80 transition-colors">
+                                            <MapPin size={14} />
                                         </div>
-                                    );
-                                })
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-bold text-secondary/60">Not seeing your location?</span>
+                                            <span className="text-xs text-secondary/90 font-bold">Use "{value}" as custom location</span>
+                                        </div>
+                                    </div>
+                                </>
                             ) : (
-                                <div className="px-6 py-10 text-center flex flex-col items-center gap-2">
-                                    <MapPin size={20} className="text-secondary/10" />
-                                    <p className="text-xs text-secondary/40 font-medium">No results for "{value}"</p>
-                                    <p className="text-[10px] text-secondary/20 uppercase tracking-widest font-bold">Try a landmark or city name</p>
+                                <div className="px-1 py-1">
+                                    <div className="px-6 py-8 text-center flex flex-col items-center gap-2">
+                                        <MapPin size={20} className="text-secondary/10" />
+                                        <p className="text-xs text-secondary/40 font-medium">No precise results for "{value}"</p>
+                                    </div>
+                                    <div
+                                        onClick={() => { onChange(value); setIsOpen(false); }}
+                                        className="flex items-center gap-4 px-4 py-4 cursor-pointer bg-secondary/5 hover:bg-secondary/10 rounded-xl transition-all duration-200 group mx-1 mb-1"
+                                    >
+                                        <div className="w-9 h-9 rounded-full bg-secondary/10 flex items-center justify-center text-secondary/60 group-hover:text-secondary rotate-45 transition-all">
+                                            <Navigation size={16} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-secondary/30 mb-0.5">Custom Entry</span>
+                                            <span className="text-sm font-bold text-secondary">Use "{value}" manually</span>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
