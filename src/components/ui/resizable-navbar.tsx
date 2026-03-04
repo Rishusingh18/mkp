@@ -43,9 +43,9 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
     const { scrollY } = useScroll();
 
     // Island transformations
-    const width = useTransform(scrollY, [0, 60], ["100vw", "90%"]);
-    const maxWidth = useTransform(scrollY, [0, 60], ["100vw", "1200px"]);
-    const borderRadius = useTransform(scrollY, [0, 60], ["1px", "40px"]);
+    const width = useTransform(scrollY, [0, 60], ["100%", "92%"]);
+    const maxWidth = useTransform(scrollY, [0, 60], ["100%", "1400px"]);
+    const borderRadius = useTransform(scrollY, [0, 60], ["0px", "40px"]);
 
     // Custom MKP Colors for the floating island
     const backgroundColor = useTransform(scrollY, [0, 60], ["rgba(14,28,79,1)", "rgba(14,28,79,0.95)"]);
