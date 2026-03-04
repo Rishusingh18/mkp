@@ -102,11 +102,19 @@ export default function LocationAutocomplete({
     };
 
     const selectLocation = (loc: Location) => {
-        // Format the display name to be cleaner
-        const mainText = loc.address.name || loc.address.suburb || loc.address.city || loc.address.town || "";
-        const subText = [loc.address.city, loc.address.state].filter(Boolean).filter(s => s !== mainText).join(", ");
+        const { address, display_name } = loc;
+        // Priority: name > suburb > road > city > town > first part of display_name
+        const mainText = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
 
-        onChange(`${mainText}${subText ? `, ${subText}` : ""}`);
+        // Collect secondary info (City, State)
+        const secondaryParts = [address.city || address.town, address.state]
+            .filter(Boolean)
+            .filter(part => part !== mainText);
+
+        const subText = Array.from(new Set(secondaryParts)).join(", ");
+        const finalAddress = subText ? `${mainText}, ${subText}` : mainText;
+
+        onChange(finalAddress);
         setIsOpen(false);
         setHighlightedIndex(-1);
     };
@@ -120,7 +128,7 @@ export default function LocationAutocomplete({
                     part.toLowerCase() === query.toLowerCase() ? (
                         <span key={i} className="font-black text-secondary">{part}</span>
                     ) : (
-                        <span key={i}>{part} Part</span> // Note: Part is just for logic, replaced below
+                        <span key={i}>{part}</span>
                     )
                 )}
             </span>
@@ -168,8 +176,12 @@ export default function LocationAutocomplete({
                     >
                         <div className="max-h-[320px] overflow-y-auto scrollbar-hide py-1">
                             {suggestions.map((loc, index) => {
-                                const mainName = loc.address.name || loc.address.suburb || loc.address.road || loc.display_name.split(',')[0];
-                                const secondaryName = loc.display_name.split(',').slice(1).join(',').trim();
+                                const { address, display_name } = loc;
+                                const mainName = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
+                                const secondaryParts = [address.city || address.town, address.state, address.country]
+                                    .filter(Boolean)
+                                    .filter(part => part !== mainName);
+                                const secondaryName = Array.from(new Set(secondaryParts)).join(', ');
 
                                 return (
                                     <div
