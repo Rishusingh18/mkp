@@ -174,7 +174,7 @@ export default function Home() {
               <div className="space-y-4 relative">
                 <div className="absolute left-[20px] top-8 bottom-8 w-0.5 border-l-2 border-dashed border-secondary/10 z-0"></div>
 
-                <div className="relative z-10 transition-all duration-300">
+                <div className="relative z-[20] transition-all duration-300">
                   <LocationAutocomplete
                     id="source"
                     value={source}
@@ -186,7 +186,7 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="relative z-10 transition-all duration-300">
+                <div className="relative z-[10] transition-all duration-300">
                   <LocationAutocomplete
                     id="destination"
                     value={destination}
