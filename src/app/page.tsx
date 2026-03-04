@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { leadService } from "@/services/leadService";
 import { supabase } from "@/lib/supabase";
@@ -10,10 +10,15 @@ export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -192,19 +197,23 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Preferred Move Date</label>
+              <div className="group cursor-pointer" onClick={() => (dateInputRef.current as any)?.showPicker?.()}>
+                <label className="block text-[10px] font-bold text-secondary/40 mb-1.5 uppercase tracking-[0.2em] group-hover:text-secondary/60 transition-colors">Preferred Move Date</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="material-icons text-secondary/40 text-lg">calendar_today</span>
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <span className="material-icons text-secondary/30 text-lg group-hover:text-secondary/60 transition-colors">calendar_month</span>
                   </div>
                   <input
                     type="date"
+                    ref={dateInputRef}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 text-sm border-secondary/20 rounded-lg bg-primary/20 text-secondary placeholder-secondary/40 focus:ring-secondary focus:border-secondary shadow-sm outline-none"
+                    className="block w-full pl-11 pr-4 py-3.5 text-sm border-secondary/10 rounded-xl bg-primary/30 text-secondary placeholder-secondary/20 focus:ring-1 focus:ring-secondary/30 focus:border-secondary/30 shadow-inner group-hover:bg-primary/40 transition-all outline-none appearance-none font-bold"
                     style={{ colorScheme: "dark" }}
                   />
+                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                    <span className="material-icons text-secondary/20 text-sm">expand_more</span>
+                  </div>
                 </div>
               </div>
 
