@@ -30,7 +30,7 @@ export const Navbar = ({ children, className }: { children: React.ReactNode; cla
     return (
         <NavbarContext.Provider value={{ isScrolled }}>
             <header className={cn("fixed top-0 left-0 right-0 z-50 flex justify-center w-full pointer-events-none transition-all duration-300",
-                isScrolled ? "p-4" : "p-0",
+                "p-4",
                 className)}>
                 {children}
             </header>
