@@ -62,7 +62,7 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
                 borderColor,
                 boxShadow,
             }}
-            className={cn("flex items-center justify-between h-14 md:h-16 px-6 md:px-8 border pointer-events-auto backdrop-blur-xl transition-all duration-300", className)}
+            className={cn("flex items-center justify-between h-12 md:h-14 px-4 md:px-6 border pointer-events-auto backdrop-blur-xl transition-all duration-300", className)}
         >
             {children}
         </motion.div>
@@ -114,7 +114,7 @@ export const NavbarButton = ({ children, onClick, className }: { children: React
     return (
         <button
             onClick={onClick}
-            className={cn("hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-10 px-5 rounded-xl items-center gap-2 transition-transform cursor-pointer font-bold text-sm shadow-lg active:scale-95", className)}
+            className={cn("hidden md:flex bg-secondary hover:bg-secondary/95 text-primary h-9 px-4 rounded-xl items-center gap-2 transition-transform cursor-pointer font-bold text-xs shadow-lg active:scale-95", className)}
         >
             {children}
         </button>
