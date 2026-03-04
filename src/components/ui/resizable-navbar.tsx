@@ -30,7 +30,7 @@ export const Navbar = ({ children, className }: { children: React.ReactNode; cla
     return (
         <NavbarContext.Provider value={{ isScrolled }}>
             <header className={cn("fixed top-0 left-0 right-0 z-50 flex justify-center w-full pointer-events-none transition-all duration-300",
-                "p-2",
+                "p-0",
                 className)}>
                 {children}
             </header>
@@ -43,9 +43,9 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
     const { scrollY } = useScroll();
 
     // Island transformations
-    const width = useTransform(scrollY, [0, 60], ["98%", "90%"]);
-    const maxWidth = useTransform(scrollY, [0, 60], ["1400px", "1200px"]);
-    const borderRadius = useTransform(scrollY, [0, 60], ["24px", "40px"]);
+    const width = useTransform(scrollY, [0, 60], ["100%", "90%"]);
+    const maxWidth = useTransform(scrollY, [0, 60], ["100%", "1200px"]);
+    const borderRadius = useTransform(scrollY, [0, 60], ["0px", "40px"]);
 
     // Custom MKP Colors for the floating island
     const backgroundColor = useTransform(scrollY, [0, 60], ["rgba(14,28,79,1)", "rgba(14,28,79,0.95)"]);
