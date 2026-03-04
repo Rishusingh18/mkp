@@ -136,7 +136,7 @@ export default function AppNavbar() {
                                     </button>
                                 </div>
                             ) : (
-                                <NavbarButton onClick={() => setIsAuthModalOpen(true)}>
+                                <NavbarButton onClick={() => setIsAuthModalOpen(true)} className="whitespace-nowrap">
                                     <Lock size={16} />
                                     <span>Client Portal</span>
                                 </NavbarButton>

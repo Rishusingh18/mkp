@@ -43,9 +43,9 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
     const { scrollY } = useScroll();
 
     // Island transformations
-    const width = useTransform(scrollY, [0, 60], ["100%", "90%"]);
-    const maxWidth = useTransform(scrollY, [0, 60], ["100%", "1200px"]);
-    const borderRadius = useTransform(scrollY, [0, 60], ["0px", "40px"]);
+    const width = useTransform(scrollY, [0, 60], ["98%", "90%"]);
+    const maxWidth = useTransform(scrollY, [0, 60], ["1400px", "1200px"]);
+    const borderRadius = useTransform(scrollY, [0, 60], ["24px", "40px"]);
 
     // Custom MKP Colors for the floating island
     const backgroundColor = useTransform(scrollY, [0, 60], ["rgba(14,28,79,1)", "rgba(14,28,79,0.95)"]);
@@ -62,7 +62,7 @@ export const NavBody = ({ children, className }: { children: React.ReactNode; cl
                 borderColor,
                 boxShadow,
             }}
-            className={cn("flex items-center justify-between h-20 px-6 md:px-10 border pointer-events-auto backdrop-blur-xl transition-colors duration-300", className)}
+            className={cn("flex items-center justify-between h-16 md:h-18 px-6 md:px-10 border pointer-events-auto backdrop-blur-xl transition-all duration-300", className)}
         >
             {children}
         </motion.div>
@@ -82,7 +82,7 @@ export const NavItems = ({ items }: { items: { label: string; href: string }[] }
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "relative text-sm font-bold px-6 h-full flex items-center rounded-xl transition-colors z-10",
+                                "relative text-sm font-bold px-6 h-full flex items-center rounded-xl transition-colors z-10 whitespace-nowrap",
                                 isActive ? "text-primary" : "text-secondary/60 hover:text-secondary"
                             )}
                         >
