@@ -58,7 +58,7 @@ export default function AppNavbar() {
                     <div className="flex flex-1 items-center gap-4 lg:gap-8 justify-between lg:justify-start w-full">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group shrink-0 h-full">
-                            <div className="h-8 w-8 md:h-9 md:w-9 bg-secondary rounded-lg flex items-center justify-center text-primary font-serif font-bold text-base md:text-lg group-hover:bg-secondary/95 transition-all shadow-inner shrink-0 pointer-events-auto">
+                            <div className="h-7 w-7 md:h-8 md:w-8 bg-secondary rounded-lg flex items-center justify-center text-primary font-serif font-bold text-sm md:text-base group-hover:bg-secondary/95 transition-all shadow-inner shrink-0 pointer-events-auto">
                                 M
                             </div>
                             <div className="flex flex-col justify-center leading-tight">
@@ -83,7 +83,7 @@ export default function AppNavbar() {
                                             animate={{ width: 240, opacity: 1 }}
                                             exit={{ width: 0, opacity: 0 }}
                                             transition={{ duration: 0.3, ease: "easeInOut" }}
-                                            className="relative flex items-center bg-white/10 border border-secondary/20 rounded-xl px-2 overflow-hidden h-9"
+                                            className="relative flex items-center bg-white/10 border border-secondary/20 rounded-xl px-2 overflow-hidden h-8"
                                         >
                                             <Search size={18} className="text-secondary/50 ml-2 shrink-0" />
                                             <input
@@ -111,7 +111,7 @@ export default function AppNavbar() {
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
                                             onClick={() => setIsSearchOpen(true)}
-                                            className="group flex flex-row items-center justify-center p-2 rounded-xl hover:bg-white/10 transition-all duration-300 text-secondary/60 hover:text-secondary h-9 w-9 hover:w-36 overflow-hidden"
+                                            className="group flex flex-row items-center justify-center p-2 rounded-xl hover:bg-white/10 transition-all duration-300 text-secondary/60 hover:text-secondary h-8 w-8 hover:w-36 overflow-hidden"
                                         >
                                             <Search size={20} className="shrink-0" />
                                             <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 text-sm font-bold">
@@ -130,7 +130,7 @@ export default function AppNavbar() {
                                     </div>
                                     <button
                                         onClick={handleLogout}
-                                        className="bg-white/10 hover:bg-white/20 text-secondary h-9 w-9 rounded-xl flex items-center justify-center transition-all cursor-pointer group shadow-lg"
+                                        className="bg-white/10 hover:bg-white/20 text-secondary h-8 w-8 rounded-xl flex items-center justify-center transition-all cursor-pointer group shadow-lg"
                                     >
                                         <X size={18} className="group-hover:scale-110 transition-transform" />
                                     </button>
