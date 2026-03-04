@@ -14,6 +14,7 @@ interface Location {
         suburb?: string;
         city?: string;
         town?: string;
+        road?: string;
         state?: string;
         country?: string;
     };
