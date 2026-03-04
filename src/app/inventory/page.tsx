@@ -10,8 +10,7 @@ const inventoryData = {
         { id: "tv_unit", name: "TV Unit", desc: "Medium Size", icon: "tv", price: 1200 },
         { id: "bookshelf", name: "Bookshelf", desc: "Standard wooden bookshelf", icon: "menu_book", price: 725 },
         { id: "recliner", name: "Recliner", desc: "Single Seater", icon: "weekend", price: 1500 },
-        { id: "floor_lamp", name: "Floor Lamp", desc: "Fragile", icon: "light", price: 400 },
-        { id: "misc_cartons_lr", name: "Misc. Cartons", desc: "Small items, books, decor", icon: "inventory_2", price: 200, size: "wide" }
+        { id: "floor_lamp", name: "Floor Lamp", desc: "Fragile", icon: "light", price: 400 }
     ],
     "Bedroom": [
         { id: "double_bed", name: "Double Bed", desc: "King/Queen size with mattress", icon: "bed", price: 3500, size: "large" },
@@ -25,19 +24,18 @@ const inventoryData = {
         { id: "microwave", name: "Microwave", desc: "Convection / Solo", icon: "settings_input_component", price: 600 },
         { id: "dining_table", name: "Dining Table", desc: "4-6 Seater with chairs", icon: "table_bar", price: 2500, size: "large" },
         { id: "gas_stove", name: "Gas Stove/Hob", desc: "2-4 Burner unit", icon: "soup_kitchen", price: 400 },
-        { id: "kitchen_rack", name: "Kitchen Rack", desc: "Steel/Wooden modular rack", icon: "shelves", price: 800 }
+        { id: "kitchen_rack", name: "Kitchen Rack", desc: "Steel/Wooden modular rack", icon: "dns", price: 800 }
     ],
     "Electronics": [
         { id: "washing_machine", name: "Washing Machine", desc: "Front/Top load", icon: "local_laundry_service", price: 1800, size: "large" },
         { id: "ac_unit", name: "AC Unit", desc: "Split/Window 1.5-2 Ton", icon: "ac_unit", price: 1500 },
         { id: "desktop_pc", name: "Desktop PC", desc: "Monitor, CPU, UPS, Printer", icon: "desktop_windows", price: 1200 },
         { id: "home_theatre", name: "Home Theatre", desc: "5.1 Speaker system", icon: "speaker", price: 800 },
-        { id: "air_cooler", name: "Air Cooler", desc: "Desert/Tower cooler", icon: "mode_fan", price: 600 }
+        { id: "air_cooler", name: "Air Cooler", desc: "Desert/Tower cooler", icon: "ac_unit", price: 600 }
     ],
     "Fragile": [
-        { id: "mirror_large", name: "Large Mirror", desc: "Wall mounted / Standing", icon: "square", price: 1200, size: "tall" },
-        { id: "glass_cabinet", name: "Glass Cabinet", desc: "Display unit with glass panes", icon: "all_in_box", price: 2200, size: "large" },
-        { id: "flower_vases", name: "Flower Vases", desc: "Set of 3 ceramic vases", icon: "potted_plant", price: 500 },
+        { id: "mirror_large", name: "Large Mirror", desc: "Wall mounted / Standing", icon: "crop_portrait", price: 1200, size: "tall" },
+        { id: "glass_cabinet", name: "Glass Cabinet", desc: "Display unit with glass panes", icon: "kitchen", price: 2200, size: "large" },
         { id: "paintings", name: "Large Paintings", desc: "Framed canvas artworks", icon: "image", price: 1500, size: "wide" },
         { id: "crockery_set", name: "Crockery Set", desc: "Bone china dinner set 48pcs", icon: "flatware", price: 2000 }
     ],
@@ -47,6 +45,9 @@ const inventoryData = {
         { id: "file_cabinet", name: "File Cabinet", desc: "3-Drawer metal unit", icon: "folder_open", price: 1200, size: "tall" },
         { id: "office_printer", name: "Laser Printer", desc: "All-in-one corporate unit", icon: "print", price: 600 },
         { id: "water_dispenser", name: "Water Dispenser", desc: "Hot/Cold floor standing", icon: "water_drop", price: 500 }
+    ],
+    "Others": [
+        { id: "misc_cartons_lr", name: "Misc. Cartons", desc: "Small items, books, decor", icon: "inventory_2", price: 200, size: "wide" }
     ]
 };
 
@@ -64,7 +65,7 @@ import { useRouter } from "next/navigation";
 import { leadService } from "@/services/leadService";
 
 export default function Inventory() {
-    const [activeCategory, setActiveCategory] = useState<keyof typeof inventoryData>("Living Room");
+    const [activeCategory, setActiveCategory] = useState<keyof typeof inventoryData | "All" | "Custom">("All");
     const [selectedItems, setSelectedItems] = useState<Record<string, number>>({
         'sofa': 1,
         'bookshelf': 2,
@@ -183,9 +184,18 @@ export default function Inventory() {
                     </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8 px-4 md:px-12">
-                    <div className="flex-1">
-                        <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 scrollbar-hide">
+                <div className="max-w-7xl mx-auto flex flex-col gap-12 px-4 md:px-12 pb-24">
+                    <div className="w-full">
+                        <div className="flex overflow-x-auto space-x-2 mb-8 pb-2 scrollbar-hide justify-start md:justify-center">
+                            <button
+                                onClick={() => setActiveCategory("All")}
+                                className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${activeCategory === "All"
+                                    ? "bg-primary text-secondary shadow-lg scale-105"
+                                    : "bg-secondary border border-primary/20 text-primary hover:border-primary"
+                                    }`}
+                            >
+                                All Items
+                            </button>
                             {categories.map((cat) => (
                                 <button
                                     key={cat}
@@ -218,21 +228,21 @@ export default function Inventory() {
                                     return (
                                         <div
                                             key={item.id}
-                                            className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
+                                            className={`relative group bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
                                         >
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                            <div className="flex justify-between items-center gap-4">
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
                                                         <span className="material-icons-outlined text-2xl">{item.icon}</span>
                                                     </div>
-                                                    <div className="max-w-[180px]">
+                                                    <div>
                                                         <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
                                                         <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
                                                     </div>
                                                 </div>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
-                                                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
+                                                    className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
                                                         }`}
                                                 >
                                                     <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
@@ -261,29 +271,33 @@ export default function Inventory() {
                                     )
                                 })
                             ) : (
-                                inventoryData[activeCategory].map((item) => {
+                                (() => {
+                                    if (activeCategory === "All") {
+                                        const allItems = Object.values(inventoryData).flat();
+                                        const uniqueItems = Array.from(new Map(allItems.map(item => [item.id, item])).values());
+                                        return uniqueItems;
+                                    }
+                                    return inventoryData[activeCategory as keyof typeof inventoryData];
+                                })().map((item) => {
                                     const qty = selectedItems[item.id] || 0;
                                     return (
                                         <div
                                             key={item.id}
-                                            className={`relative group h-full bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item min-h-[160px] ${item.size === "large" ? "md:col-span-2" :
-                                                item.size === "tall" ? "md:row-span-2" :
-                                                    item.size === "wide" ? "md:col-span-2" : ""
-                                                } ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
+                                            className={`relative group bg-primary rounded-xl border p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-all bento-item ${qty > 0 ? "border-secondary" : "border-secondary/20"}`}
                                         >
-                                            <div className="flex justify-between items-start">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                            <div className="flex justify-between items-center gap-4">
+                                                <div className="flex items-center gap-4 flex-1">
+                                                    <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
                                                         <span className="material-icons-outlined text-2xl">{item.icon}</span>
                                                     </div>
-                                                    <div className="max-w-[180px]">
+                                                    <div>
                                                         <h3 className="font-display font-bold text-secondary leading-tight">{item.name}</h3>
                                                         <p className="text-[10px] text-secondary/70 uppercase tracking-wide mt-1">{item.desc}</p>
                                                     </div>
                                                 </div>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, qty > 0 ? -qty : 1)}
-                                                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
+                                                    className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${qty > 0 ? "bg-secondary border-secondary" : "border-secondary/30 group-hover:border-secondary"
                                                         }`}
                                                 >
                                                     <span className={`material-icons-outlined text-sm text-primary transition-opacity ${qty > 0 ? "opacity-100" : "opacity-0"}`}>check</span>
@@ -317,7 +331,7 @@ export default function Inventory() {
                         <div className="mt-12 flex justify-center">
                             <button
                                 onClick={() => setIsCustomMenuOpen(true)}
-                                className="flex items-center gap-2 text-primary font-bold hover:underline text-sm uppercase tracking-widest cursor-pointer group"
+                                className="flex items-center gap-2 text-primary font-bold hover:underline text-sm uppercase tracking-widest cursor-pointer group px-6 py-3 border-2 border-primary/20 rounded-full hover:border-primary/40 transition-all"
                             >
                                 <span className="material-icons-outlined text-lg group-hover:rotate-90 transition-transform">add_circle_outline</span>
                                 Can't find an item? Add Custom Item
@@ -325,61 +339,41 @@ export default function Inventory() {
                         </div>
                     </div>
 
-                    <div className="lg:w-96 relative pb-12">
-                        <div className="sticky top-24">
-                            <div className="bg-primary text-secondary rounded-xl shadow-elegant overflow-hidden border border-primary">
-                                <div className="bg-primary p-6 border-b border-secondary/10">
-                                    <h2 className="font-display text-xl font-bold text-secondary flex items-center gap-2">
-                                        <span className="material-icons-outlined text-secondary">receipt_long</span>
-                                        Estimated Quote
-                                    </h2>
-                                    <p className="text-xs text-secondary/70 mt-2 font-light">Price adjusts automatically based on inventory volume.</p>
-                                </div>
-                                <div className="p-6 space-y-4">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-secondary/70">Base Shipping</span>
-                                        <span className="font-semibold text-secondary">₹{basePrice.toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-secondary/70">Inventory ({inventoryStats.count} items)</span>
-                                        <span className="font-semibold text-secondary">₹{inventoryStats.price.toLocaleString()}</span>
-                                    </div>
-                                    <div className="pt-4 border-t border-secondary/10">
-                                        <label className="flex items-center gap-3 cursor-pointer group">
-                                            <input type="checkbox" className="peer sr-only" defaultChecked />
-                                            <div className="w-5 h-5 rounded border border-secondary/30 flex items-center justify-center group-hover:border-secondary/50 transition-colors peer-checked:bg-secondary">
-                                                <span className="material-icons text-xs text-primary opacity-0 peer-checked:opacity-100">check</span>
-                                            </div>
-                                            <span className="text-xs text-secondary/70">Insurance Coverage (Recommended)</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div className="bg-primary p-6 border-t border-secondary/10">
-                                    <div className="flex justify-between items-end mb-1">
-                                        <span className="text-secondary uppercase tracking-widest font-semibold">Total Estimate</span>
-                                        <span className="font-display text-2xl font-bold text-secondary">₹{totalEstimate.toLocaleString()}</span>
-                                    </div>
-                                    <p className="text-[10px] text-secondary/70 text-right mb-6">*Tax excluded</p>
-                                    <button
-                                        onClick={handleProceedToSummary}
-                                        disabled={loading}
-                                        className="w-full py-4 bg-secondary hover:bg-secondary/95 text-primary font-bold rounded-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70"
-                                    >
-                                        {loading ? "Saving..." : "Proceed to Packaging"}
-                                        {!loading && <span className="material-icons-outlined">arrow_forward</span>}
-                                    </button>
-                                </div>
+                    <div className="w-full max-w-3xl mx-auto border-t border-primary/10 pt-12">
+                        <div className="bg-primary text-secondary rounded-2xl shadow-elegant overflow-hidden border border-primary p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div>
+                                <h2 className="font-display text-2xl font-bold flex items-center gap-3 mb-2">
+                                    <span className="material-icons-outlined text-3xl">inventory_2</span>
+                                    Inventory Summary
+                                </h2>
+                                <p className="text-sm text-secondary/70">
+                                    {inventoryStats.count > 0
+                                        ? `You have carefully selected ${inventoryStats.count} items for your upcoming move.`
+                                        : "Please build your inventory list to proceed."}
+                                </p>
                             </div>
 
-                            <div className="mt-6 grid grid-cols-2 gap-4">
-                                <div className="bg-primary/5 p-3 rounded-lg border border-primary/10 flex flex-col items-center text-center shadow-sm">
-                                    <span className="material-icons-outlined text-primary mb-1">verified_user</span>
-                                    <span className="text-[10px] font-bold text-primary uppercase">Insured Move</span>
-                                </div>
-                                <div className="bg-primary/5 p-3 rounded-lg border border-primary/10 flex flex-col items-center text-center shadow-sm">
-                                    <span className="material-icons-outlined text-primary mb-1">support_agent</span>
-                                    <span className="text-[10px] font-bold text-primary uppercase">24/7 Support</span>
-                                </div>
+                            <div className="w-full md:w-auto flex-shrink-0">
+                                <button
+                                    onClick={handleProceedToSummary}
+                                    disabled={loading || inventoryStats.count === 0}
+                                    className="w-full md:w-auto px-8 py-4 bg-secondary hover:bg-secondary/95 text-primary font-bold rounded-xl transition-all transform active:scale-95 flex items-center justify-center gap-3 disabled:opacity-70 shadow-lg hover:shadow-xl"
+                                >
+                                    {loading ? "Saving..." : "Proceed to Packaging"}
+                                    {!loading && <span className="material-icons-outlined">arrow_forward</span>}
+                                </button>
+                                <p className="text-[10px] text-secondary/50 text-center mt-3 uppercase tracking-wider">Pricing details incoming</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-center gap-4">
+                            <div className="bg-primary/5 px-6 py-3 rounded-full border border-primary/10 flex items-center gap-3 shadow-sm">
+                                <span className="material-icons-outlined text-primary">verified_user</span>
+                                <span className="text-xs font-bold text-primary uppercase tracking-wide">Insured Move</span>
+                            </div>
+                            <div className="bg-primary/5 px-6 py-3 rounded-full border border-primary/10 flex items-center gap-3 shadow-sm">
+                                <span className="material-icons-outlined text-primary">support_agent</span>
+                                <span className="text-xs font-bold text-primary uppercase tracking-wide">24/7 Support</span>
                             </div>
                         </div>
                     </div>
