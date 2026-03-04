@@ -5,21 +5,28 @@ import { useRouter } from "next/navigation";
 import { leadService } from "@/services/leadService";
 import { supabase } from "@/lib/supabase";
 import AuthModal from "@/components/AuthModal";
+import CustomDatePicker from "@/components/CustomDatePicker";
+import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const dateInputRef = useRef<HTMLInputElement>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const router = useRouter();
+
+  // Initialize date as a Date object
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -36,7 +43,7 @@ export default function Home() {
   const handleProceed = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!source || !destination || !date) {
+    if (!source || !destination || !selectedDate) {
       alert("Please fill in all the details.");
       return;
     }
@@ -52,7 +59,7 @@ export default function Home() {
         user_id: user.id,
         pickup_city: source,
         destination_city: destination,
-        moving_date: date,
+        moving_date: format(selectedDate, "yyyy-MM-dd"),
         shift_type: shiftType,
         total_estimate: 0, // Initial estimate
       });
@@ -197,24 +204,34 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group cursor-pointer" onClick={() => (dateInputRef.current as any)?.showPicker?.()}>
-                <label className="block text-[10px] font-bold text-secondary/40 mb-1.5 uppercase tracking-[0.2em] group-hover:text-secondary/60 transition-colors">Preferred Move Date</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <span className="material-icons text-secondary/30 text-lg group-hover:text-secondary/60 transition-colors">calendar_month</span>
+              <div className="relative group">
+                <label className="block text-[10px] font-bold text-secondary/40 mb-2 uppercase tracking-[0.25em] group-hover:text-secondary/60 transition-colors">Preferred Move Date</label>
+
+                <button
+                  type="button"
+                  onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                  className="w-full flex items-center justify-between pl-4 pr-5 py-3.5 bg-primary/40 border border-secondary/10 rounded-2xl text-secondary hover:bg-primary/50 hover:border-secondary/20 transition-all duration-300 shadow-inner group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary/60 group-hover:scale-110 group-hover:bg-secondary/20 transition-all duration-500">
+                      <CalendarIcon size={20} />
+                    </div>
+                    <div className="flex flex-col items-start translate-y-[1px]">
+                      <span className="text-[10px] text-secondary/30 uppercase tracking-widest font-bold leading-none mb-1">Scheduled for</span>
+                      <span className="text-base font-serif font-bold tracking-wide">
+                        {format(selectedDate, "MMM dd, yyyy")}
+                      </span>
+                    </div>
                   </div>
-                  <input
-                    type="date"
-                    ref={dateInputRef}
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="block w-full pl-11 pr-4 py-3.5 text-sm border-secondary/10 rounded-xl bg-primary/30 text-secondary placeholder-secondary/20 focus:ring-1 focus:ring-secondary/30 focus:border-secondary/30 shadow-inner group-hover:bg-primary/40 transition-all outline-none appearance-none font-bold"
-                    style={{ colorScheme: "dark" }}
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
-                    <span className="material-icons text-secondary/20 text-sm">expand_more</span>
-                  </div>
-                </div>
+                  <ChevronDown size={18} className={cn("text-secondary/30 transition-transform duration-500", isDatePickerOpen && "rotate-180")} />
+                </button>
+
+                <CustomDatePicker
+                  selectedDate={selectedDate}
+                  onSelect={setSelectedDate}
+                  isOpen={isDatePickerOpen}
+                  onClose={() => setIsDatePickerOpen(false)}
+                />
               </div>
 
               <button
