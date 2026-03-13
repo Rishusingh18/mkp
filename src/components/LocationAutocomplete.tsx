@@ -43,6 +43,8 @@ export default function LocationAutocomplete({
     const debounceTimerRef = useRef<NodeJS.Timeout>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
 
+    const [searchCache] = useState<Record<string, Location[]>>({});
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -54,7 +56,16 @@ export default function LocationAutocomplete({
     }, []);
 
     const fetchSuggestions = async (query: string) => {
-        if (query.length < 2) return;
+        const trimmedQuery = query.trim().toLowerCase();
+        if (trimmedQuery.length < 2) return;
+
+        // Check Cache first
+        if (searchCache[trimmedQuery]) {
+            setSuggestions(searchCache[trimmedQuery]);
+            setIsOpen(true);
+            setIsLoading(false);
+            return;
+        }
 
         // Cancel previous request
         if (abortControllerRef.current) {
@@ -65,16 +76,19 @@ export default function LocationAutocomplete({
         abortControllerRef.current = controller;
 
         setIsLoading(true);
+
         try {
-            // Nominatim API call with India filter
-            // Removed featuretype restriction to be more inclusive of broad searches
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=in&addressdetails=1&limit=5`,
                 { signal: controller.signal }
             );
             const data = await response.json();
+
+            // Cache the result
+            searchCache[trimmedQuery] = data;
+
             setSuggestions(data);
-            setIsOpen(true); // Always show dropdown to show 'No results' if empty
+            setIsOpen(true);
         } catch (error: any) {
             if (error.name === 'AbortError') return;
             console.error("Error fetching locations:", error);
@@ -92,10 +106,18 @@ export default function LocationAutocomplete({
             clearTimeout(debounceTimerRef.current);
         }
 
-        if (inputValue.length > 1) {
+        const trimmedInput = inputValue.trim();
+        if (trimmedInput.length > 1) {
+            // If we have it in cache, show it immediately but still debounce a refresh if we want
+            // For now, let's just show cache immediately for instant feel
+            if (searchCache[trimmedInput.toLowerCase()]) {
+                setSuggestions(searchCache[trimmedInput.toLowerCase()]);
+                setIsOpen(true);
+            }
+
             debounceTimerRef.current = setTimeout(() => {
-                fetchSuggestions(inputValue);
-            }, 300); // 300ms debounce
+                fetchSuggestions(trimmedInput);
+            }, 300);
         } else {
             setSuggestions([]);
             setIsOpen(false);
@@ -107,10 +129,10 @@ export default function LocationAutocomplete({
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
-            setHighlightedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
+            setHighlightedIndex((prev) => (prev < (suggestions.length > 0 ? suggestions.length - 1 : 0) ? prev + 1 : prev));
         } else if (e.key === "ArrowUp") {
             setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-        } else if (e.key === "Enter" && highlightedIndex >= 0) {
+        } else if (e.key === "Enter" && highlightedIndex >= 0 && suggestions.length > 0) {
             e.preventDefault();
             selectLocation(suggestions[highlightedIndex]);
         } else if (e.key === "Escape") {
@@ -120,10 +142,8 @@ export default function LocationAutocomplete({
 
     const selectLocation = (loc: Location) => {
         const { address, display_name } = loc;
-        // Priority: name > suburb > road > city > town > first part of display_name
         const mainText = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
 
-        // Collect secondary info (City, State)
         const secondaryParts = [address.city || address.town, address.state]
             .filter(Boolean)
             .filter(part => part !== mainText);
@@ -138,16 +158,18 @@ export default function LocationAutocomplete({
 
     const highlightMatch = (text: string, query: string) => {
         if (!query) return text;
-        const parts = text.split(new RegExp(`(${query})`, "gi"));
+        const index = text.toLowerCase().indexOf(query.toLowerCase());
+        if (index === -1) return text;
+
+        const before = text.slice(0, index);
+        const match = text.slice(index, index + query.length);
+        const after = text.slice(index + query.length);
+
         return (
             <span>
-                {parts.map((part, i) =>
-                    part.toLowerCase() === query.toLowerCase() ? (
-                        <span key={i} className="font-black text-secondary">{part}</span>
-                    ) : (
-                        <span key={i}>{part}</span>
-                    )
-                )}
+                {before}
+                <span className="font-black text-secondary">{match}</span>
+                {after}
             </span>
         );
     };
@@ -165,7 +187,7 @@ export default function LocationAutocomplete({
                     value={value}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    onFocus={() => value.length > 2 && suggestions.length > 0 && setIsOpen(true)}
+                    onFocus={() => value.trim().length > 1 && suggestions.length > 0 && setIsOpen(true)}
                     autoComplete="off"
                     className="block w-full pl-10 pr-10 py-3.5 text-sm border-secondary/10 rounded-xl bg-primary/30 text-secondary placeholder-secondary/30 focus:ring-1 focus:ring-secondary/30 focus:border-secondary/30 transition-all outline-none shadow-inner group-hover:bg-primary/40"
                     placeholder={placeholder}
@@ -174,7 +196,7 @@ export default function LocationAutocomplete({
                     {isLoading && <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}><Search size={14} className="text-secondary/20" /></motion.div>}
                     {value && !isLoading && (
                         <button
-                            onClick={() => { onChange(""); setIsOpen(false); }}
+                            onClick={() => { onChange(""); setIsOpen(false); setSuggestions([]); }}
                             className="text-secondary/20 hover:text-secondary/60 transition-colors"
                         >
                             <X size={14} />
@@ -184,7 +206,7 @@ export default function LocationAutocomplete({
             </div>
 
             <AnimatePresence>
-                {isOpen && value.length > 1 && (
+                {isOpen && value.trim().length > 1 && (
                     <motion.div
                         initial={{ opacity: 0, y: 5, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -192,18 +214,32 @@ export default function LocationAutocomplete({
                         className="absolute top-full left-0 right-0 mt-2 z-[60] bg-primary/95 border border-secondary/10 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] overflow-hidden"
                     >
                         <div className="max-h-[320px] overflow-y-auto scrollbar-hide py-1">
-                            {isLoading ? (
-                                <div className="px-6 py-10 text-center flex flex-col items-center gap-3">
-                                    <motion.div
-                                        animate={{ rotate: 360 }}
-                                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                                    >
-                                        <Search size={20} className="text-secondary/20" />
-                                    </motion.div>
-                                    <p className="text-xs text-secondary/40 font-medium">Searching custom locations...</p>
+                            {isLoading && suggestions.length === 0 ? (
+                                <div className="p-1 space-y-1">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="flex items-start gap-4 px-4 py-3.5">
+                                            <div className="mt-0.5 w-8 h-8 rounded-full bg-secondary/5 animate-pulse" />
+                                            <div className="flex flex-col flex-1 gap-2 pt-1">
+                                                <div className="h-4 w-2/3 bg-secondary/10 rounded animate-pulse" />
+                                                <div className="h-3 w-1/3 bg-secondary/5 rounded animate-pulse" />
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             ) : suggestions.length > 0 ? (
-                                <>
+                                <motion.div
+                                    initial="hidden"
+                                    animate="show"
+                                    variants={{
+                                        hidden: { opacity: 0 },
+                                        show: {
+                                            opacity: 1,
+                                            transition: {
+                                                staggerChildren: 0.05
+                                            }
+                                        }
+                                    }}
+                                >
                                     {suggestions.map((loc, index) => {
                                         const { address, display_name } = loc;
                                         const mainName = address.name || address.suburb || address.road || address.city || address.town || display_name.split(',')[0];
@@ -213,8 +249,12 @@ export default function LocationAutocomplete({
                                         const secondaryName = Array.from(new Set(secondaryParts)).join(', ');
 
                                         return (
-                                            <div
+                                            <motion.div
                                                 key={`${loc.lat}-${loc.lon}-${index}`}
+                                                variants={{
+                                                    hidden: { opacity: 0, x: -10 },
+                                                    show: { opacity: 1, x: 0 }
+                                                }}
                                                 onClick={() => selectLocation(loc)}
                                                 onMouseEnter={() => setHighlightedIndex(index)}
                                                 className={cn(
@@ -233,10 +273,14 @@ export default function LocationAutocomplete({
                                                         {secondaryName}
                                                     </span>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         );
                                     })}
-                                    <div
+                                    <motion.div
+                                        variants={{
+                                            hidden: { opacity: 0, y: 10 },
+                                            show: { opacity: 1, y: 0 }
+                                        }}
                                         onClick={() => { onChange(value); setIsOpen(false); }}
                                         className="mt-1 border-t border-secondary/5 flex items-center gap-4 px-4 py-3.5 cursor-pointer hover:bg-secondary/5 transition-all duration-200 group"
                                     >
@@ -247,9 +291,9 @@ export default function LocationAutocomplete({
                                             <span className="text-xs font-bold text-secondary/60">Not seeing your location?</span>
                                             <span className="text-xs text-secondary/90 font-bold">Use "{value}" as custom location</span>
                                         </div>
-                                    </div>
-                                </>
-                            ) : (
+                                    </motion.div>
+                                </motion.div>
+                            ) : !isLoading ? (
                                 <div className="px-1 py-1">
                                     <div className="px-6 py-8 text-center flex flex-col items-center gap-2">
                                         <MapPin size={20} className="text-secondary/10" />
@@ -268,7 +312,7 @@ export default function LocationAutocomplete({
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            ) : null}
                         </div>
 
                         {/* Attribution / Footer */}

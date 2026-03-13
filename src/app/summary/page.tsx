@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { leadService, LeadData } from "@/services/leadService";
+import { toast } from "sonner";
 
 export default function Summary() {
     const [lead, setLead] = useState<LeadData | null>(null);
     const [loading, setLoading] = useState(true);
     const [confirming, setConfirming] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -47,14 +49,14 @@ export default function Summary() {
         if (!lead?.id) return;
         setConfirming(true);
         try {
-            console.log(`Attempting to confirm booking for lead ID: ${lead.id}`);
-            await leadService.updateLead(lead.id, { status: 'confirmed' });
-            console.log("Booking successfully confirmed.");
-            alert("Booking Confirmed! Our representative will contact you shortly.");
-            // Optionally redirect to a dashboard
+            console.log(`Attempting to submit request for lead ID: ${lead.id}`);
+            await leadService.updateLead(lead.id, { status: 'submitted' });
+            console.log("Request successfully submitted.");
+            setSubmitted(true);
+            toast.success("Request Submitted! Our representative will contact you shortly with a personalized quote.");
         } catch (err) {
-            console.error("Error confirming booking:", err);
-            alert("Failed to confirm booking. Please try again.");
+            console.error("Error submitting request:", err);
+            toast.error("Failed to submit request. Please try again.");
         } finally {
             setConfirming(false);
         }
@@ -101,8 +103,8 @@ export default function Summary() {
                 <div className="lg:col-span-8 space-y-6">
                     <div className="bg-primary rounded-xl shadow-sm border border-secondary/20 p-6">
                         <div className="flex items-center justify-between mb-2">
-                            <h1 className="text-2xl font-serif text-secondary font-semibold">Booking Summary</h1>
-                            <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider">{lead.status === 'confirmed' ? 'Confirmed' : 'Quote Finalized'}</span>
+                            <h1 className="text-2xl font-serif text-secondary font-semibold">Relocation Request</h1>
+                            <span className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider">{lead.status === 'submitted' ? 'Submitted' : 'Draft'}</span>
                         </div>
                         <p className="text-secondary/80 text-sm">Reference ID: #MKP-LD-{lead.id?.slice(0, 8).toUpperCase()}</p>
                         <div className="mt-6 flex items-center relative">
@@ -121,8 +123,8 @@ export default function Summary() {
                                     <span className="text-xs mt-2 font-medium text-secondary">Quote</span>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <div className={`w-8 h-8 ${lead.status === 'confirmed' ? 'bg-secondary text-primary' : 'bg-primary text-secondary/30'} rounded-full flex items-center justify-center text-sm font-bold border-4 border-primary`}>4</div>
-                                    <span className={`text-xs mt-2 font-bold ${lead.status === 'confirmed' ? 'text-secondary' : 'text-secondary/30'}`}>Confirm</span>
+                                    <div className={`w-8 h-8 ${lead.status === 'submitted' ? 'bg-secondary text-primary' : 'bg-primary text-secondary/30'} rounded-full flex items-center justify-center text-sm font-bold border-4 border-primary`}>4</div>
+                                    <span className={`text-xs mt-2 font-bold ${lead.status === 'submitted' ? 'text-secondary' : 'text-secondary/30'}`}>Submit</span>
                                 </div>
                             </div>
                         </div>
@@ -170,15 +172,15 @@ export default function Summary() {
                         <div className="bg-secondary/10 p-6 border-t border-secondary/10">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm text-secondary">Inventory Items ({lead.items?.length || 0})</span>
-                                <span className="text-sm font-medium text-secondary">View Details</span>
+                                <span className="text-sm font-medium text-secondary italic">Verified by Expert</span>
                             </div>
                             <div className="flex justify-between items-center mb-4">
-                                <span className="text-sm text-secondary">Base Estimate (Volume based)</span>
-                                <span className="text-sm font-medium text-secondary">₹{lead.total_estimate?.toLocaleString()}</span>
+                                <span className="text-sm text-secondary">Customized Quote</span>
+                                <span className="text-sm font-medium text-secondary">Pending Review</span>
                             </div>
-                            <div className="border-t border-secondary/20 pt-4 flex justify-between items-center">
-                                <span className="font-serif font-bold text-secondary text-lg">Total Quote</span>
-                                <span className="font-serif font-bold text-secondary text-2xl">₹{lead.total_estimate?.toLocaleString()}</span>
+                            <div className="border-t border-secondary/20 pt-4 flex justify-between items-center opacity-50">
+                                <span className="font-serif font-bold text-secondary text-lg">Estimated Total</span>
+                                <span className="font-serif font-bold text-secondary text-xl">Contact for Quote</span>
                             </div>
                         </div>
                     </div>
@@ -241,13 +243,13 @@ export default function Summary() {
                     <div className="sticky bottom-6">
                         <button
                             onClick={handleConfirmBooking}
-                            disabled={confirming || lead.status === 'confirmed'}
+                            disabled={confirming || lead.status === 'submitted' || submitted}
                             className="w-full bg-primary hover:bg-primary/90 text-secondary font-bold text-lg py-4 px-6 rounded-xl shadow-elegant transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-secondary/20 disabled:opacity-70"
                         >
-                            {confirming ? "Processing..." : lead.status === 'confirmed' ? "Booking Confirmed" : "Confirm Booking"}
-                            {!confirming && lead.status !== 'confirmed' && <span className="material-icons-outlined">arrow_forward</span>}
+                            {submitted || lead.status === 'submitted' ? "Request Submitted" : confirming ? "Submitting..." : "Submit Relocation Request"}
+                            {!confirming && !submitted && lead.status !== 'submitted' && <span className="material-icons-outlined">send</span>}
                         </button>
-                        <p className="text-center text-xs text-secondary mt-3">By confirming, you agree to MKP Terms of Service.</p>
+                        <p className="text-center text-xs text-primary/60 mt-3 font-semibold">By submitting, our manager will reach out for a final walkthrough.</p>
                     </div>
                 </div>
             </div>
@@ -283,7 +285,7 @@ export default function Summary() {
             <div className="fixed bottom-0 left-0 w-full h-32 pointer-events-none opacity-20 z-0 overflow-hidden">
                 <div className="absolute bottom-10 w-full border-b-2 border-dashed border-primary/20"></div>
                 <div className="animate-drive absolute bottom-4 text-primary">
-                    <span className="material-icons-outlined text-6xl transform scale-x-[-1]">local_shipping</span>
+                    <span className="material-icons-outlined text-6xl">local_shipping</span>
                 </div>
             </div>
         </main>

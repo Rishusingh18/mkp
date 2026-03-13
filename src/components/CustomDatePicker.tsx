@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, addDays, isBefore, startOfToday } from "date-fns";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +18,24 @@ interface CustomDatePickerProps {
 
 export default function CustomDatePicker({ selectedDate, onSelect, isOpen, onClose }: CustomDatePickerProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date(selectedDate));
+    const [position, setPosition] = useState<'bottom' | 'top'>('bottom');
+    const containerRef = useRef<HTMLDivElement>(null);
     const today = startOfToday();
+
+    useEffect(() => {
+        if (isOpen && containerRef.current) {
+            const rect = containerRef.current.parentElement?.getBoundingClientRect();
+            if (rect) {
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const pickerHeight = 450; // Estimated max height of the picker
+                if (spaceBelow < pickerHeight && rect.top > pickerHeight) {
+                    setPosition('top');
+                } else {
+                    setPosition('bottom');
+                }
+            }
+        }
+    }, [isOpen]);
 
     const renderHeader = () => {
         return (
@@ -127,11 +144,15 @@ export default function CustomDatePicker({ selectedDate, onSelect, isOpen, onClo
 
                     {/* Calendar Card */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        ref={containerRef}
+                        initial={{ opacity: 0, y: position === 'bottom' ? 10 : -10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        exit={{ opacity: 0, y: position === 'bottom' ? 10 : -10, scale: 0.95 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="absolute top-full left-0 mt-4 z-[70] w-[320px] bg-primary/95 border border-secondary/20 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden"
+                        className={cn(
+                            "absolute left-0 z-[70] w-[320px] bg-primary/95 border border-secondary/20 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden",
+                            position === 'bottom' ? "top-full mt-4" : "bottom-full mb-4"
+                        )}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {renderHeader()}
@@ -145,10 +166,6 @@ export default function CustomDatePicker({ selectedDate, onSelect, isOpen, onClo
                             >
                                 Go to Today
                             </button>
-                            <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-secondary/40" />
-                                <span className="text-[9px] text-secondary/40 font-bold uppercase tracking-tighter">Premium Scheduler</span>
-                            </div>
                         </div>
                     </motion.div>
                 </>

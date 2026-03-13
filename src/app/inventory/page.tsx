@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { toast } from "sonner";
 
 const inventoryData = {
     "Living Room": [
@@ -93,14 +94,14 @@ export default function Inventory() {
 
             await leadService.updateLead(leadId, {
                 items: itemsArray,
-                total_estimate: totalEstimate,
+                total_estimate: 0,
                 status: 'inventory_mapped'
             });
 
             router.push("/summary");
         } catch (err: any) {
             console.error("Error updating lead inventory:", err);
-            alert("Failed to save inventory. Please try again.");
+            toast.error("Failed to save inventory. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -180,7 +181,7 @@ export default function Inventory() {
                 <div className="px-4 md:px-12 py-12">
                     <h1 className="font-display text-4xl md:text-5xl font-bold text-primary mb-4 text-center uppercase tracking-tight">Smart Inventory Grid</h1>
                     <p className="text-lg text-primary/70 mb-12 text-center max-w-3xl mx-auto">
-                        Select the items you wish to relocate. Our AI-driven estimation engine updates your quote in real-time as you build your inventory.
+                        Select the items you wish to relocate. Our team will review your selection and provide a precise quote based on volume and requirements.
                     </p>
                 </div>
 
@@ -359,10 +360,10 @@ export default function Inventory() {
                                     disabled={loading || inventoryStats.count === 0}
                                     className="w-full md:w-auto px-8 py-4 bg-secondary hover:bg-secondary/95 text-primary font-bold rounded-xl transition-all transform active:scale-95 flex items-center justify-center gap-3 disabled:opacity-70 shadow-lg hover:shadow-xl"
                                 >
-                                    {loading ? "Saving..." : "Proceed to Packaging"}
+                                    {loading ? "Saving..." : "Review Relocation Plan"}
                                     {!loading && <span className="material-icons-outlined">arrow_forward</span>}
                                 </button>
-                                <p className="text-[10px] text-secondary/50 text-center mt-3 uppercase tracking-wider">Pricing details incoming</p>
+                                <p className="text-[10px] text-secondary/50 text-center mt-3 uppercase tracking-wider">Expert review required</p>
                             </div>
                         </div>
 

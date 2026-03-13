@@ -10,6 +10,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarIcon, ChevronDown, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
@@ -41,15 +42,16 @@ export default function Home() {
     return () => authListener.subscription.unsubscribe();
   }, []);
 
-  const handleProceed = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleProceed = async (e?: React.MouseEvent, guestData?: any) => {
+    if (e) e.preventDefault();
 
     if (!source || !destination || !selectedDate) {
-      alert("Please fill in all the details.");
+      toast.error("Please fill in all the details to get an estimate.");
       return;
     }
 
-    if (!user) {
+    // If no user and no guestData provided, open the modal
+    if (!user && !guestData) {
       setIsAuthModalOpen(true);
       return;
     }
@@ -57,20 +59,21 @@ export default function Home() {
     setLoading(true);
     try {
       const lead = await leadService.createLead({
-        user_id: user.id,
+        user_id: user?.id || null,
+        customer_name: guestData?.full_name || null,
+        customer_phone: guestData?.phone || null,
         pickup_city: source,
         destination_city: destination,
         moving_date: format(selectedDate, "yyyy-MM-dd"),
         shift_type: shiftType,
-        total_estimate: 0, // Initial estimate
+        total_estimate: 0,
       });
 
-      // Store lead ID for the next steps
       localStorage.setItem("current_lead_id", lead.id);
       router.push("/inventory");
     } catch (err: any) {
       console.error("Error creating lead:", err);
-      alert("Failed to initiate relocation. Please try again.");
+      toast.error("Failed to initiate relocation. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -82,9 +85,9 @@ export default function Home() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={(u) => {
-          setUser(u);
           setIsAuthModalOpen(false);
-          // We don't auto-handleProceed here to avoid side effects, user clicks again or we could trigger it.
+          // Directly proceed with the captured guest data
+          handleProceed(undefined, u);
         }}
       />
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -234,7 +237,7 @@ export default function Home() {
                 disabled={loading}
                 className="w-full mt-4 bg-secondary hover:bg-secondary/90 text-primary font-bold py-4 px-4 rounded-lg shadow-lg hover:shadow-xl transform transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group disabled:opacity-70"
               >
-                <span>{loading ? "Processing..." : "Proceed to Estimate"}</span>
+                <span>{loading ? "Processing..." : "Get Free Quote"}</span>
                 {!loading && <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>}
               </button>
             </div>
@@ -283,8 +286,8 @@ export default function Home() {
               },
               {
                 icon: 'payments',
-                title: 'Receive Free Instant Quote',
-                desc: 'Receive an instant, comprehensive quote with zero hidden charges. We provide the most transparent pricing for all shifts.'
+                title: 'Receive Expert Quote',
+                desc: 'Receive a comprehensive quote after our team reviews your relocation requirements. Zero hidden charges.'
               },
               {
                 icon: 'support_agent',

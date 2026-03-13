@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   description: "Corporate Relocation Services",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,6 +39,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${cinzel.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}
       >
+        <Toaster position="bottom-right" theme="dark" closeButton richColors />
         <Navbar />
         <div className="flex-1 pt-18 flex flex-col">
           {children}

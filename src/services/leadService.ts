@@ -10,6 +10,8 @@ export interface LeadData {
     items?: any[];
     total_estimate?: number;
     status?: string;
+    customer_name?: string;
+    customer_phone?: string;
 }
 
 export const leadService = {
@@ -68,6 +70,20 @@ export const leadService = {
 
         if (error) {
             console.error("Supabase error in getLeadById:", error);
+            throw error;
+        }
+        return data;
+    },
+
+    async getAllLeads() {
+        console.log("Supabase call: getAllLeads");
+        const { data, error } = await supabase
+            .from('leads')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Supabase error in getAllLeads:", error);
             throw error;
         }
         return data;
