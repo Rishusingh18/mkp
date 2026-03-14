@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, X, Lock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
-import AuthModal from "./AuthModal";
+import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import {
     Navbar,
@@ -29,9 +28,9 @@ export default function AppNavbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [user, setUser] = useState<any>(null);
     const pathname = usePathname();
+    const router = useRouter();
 
     // Auth State Handling
     useEffect(() => {
@@ -138,9 +137,9 @@ export default function AppNavbar() {
                                     </button>
                                 </div>
                             ) : (
-                                <NavbarButton onClick={() => setIsAuthModalOpen(true)} className="whitespace-nowrap">
+                                <NavbarButton onClick={() => router.push('/login')} className="whitespace-nowrap">
                                     <Lock size={16} />
-                                    <span>Client Portal</span>
+                                    <span>Login</span>
                                 </NavbarButton>
                             )}
                         </div>
@@ -212,24 +211,19 @@ export default function AppNavbar() {
                             ) : (
                                 <button
                                     onClick={() => {
-                                        setIsAuthModalOpen(true);
                                         setIsMobileMenuOpen(false);
+                                        router.push('/login');
                                     }}
                                     className="w-full bg-secondary text-primary font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-transform"
                                 >
                                     <Lock size={20} />
-                                    Client Portal
+                                    Login
                                 </button>
                             )}
                         </div>
                     </MobileNavMenu>
                 </MobileNav>
             </Navbar>
-
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
-            />
         </div>
     );
 }
