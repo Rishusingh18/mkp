@@ -18,8 +18,10 @@ import {
 } from "./ui/resizable-navbar";
 
 const navItems = [
-    { label: 'Select Route', href: '/' },
-    { label: 'Inventory', href: '/inventory' },
+    { label: 'Relocation', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Services', href: '/services' },
+    { label: 'Contact Us', href: '/contact' },
     { label: 'Summary', href: '/summary' }
 ];
 
