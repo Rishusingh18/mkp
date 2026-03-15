@@ -3,9 +3,8 @@ import { Instagram, Facebook, Youtube, MapPin } from "lucide-react";
 
 export default function Footer() {
     return (
-        <div className="footer-reveal-container h-full">
-            <footer className="footer-content bg-primary text-background-light/60 py-10 border-t border-secondary/10 mt-auto z-10 relative">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+        <footer className="bg-primary text-background-light/60 py-8 border-t border-secondary/10 mt-auto w-full relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
                     <Link href="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity cursor-pointer">
                         <div className="h-8 w-8 bg-secondary rounded flex items-center justify-center text-primary font-serif font-bold text-lg">M</div>
                         <div className="text-sm">
@@ -34,8 +33,7 @@ export default function Footer() {
                             </a>
                         </div>
                     </div>
-                </div>
-            </footer>
-        </div>
+            </div>
+        </footer>
     );
 }
