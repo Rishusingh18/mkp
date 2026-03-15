@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, X, Lock, ArrowRight } from "lucide-react";
+import { Search, X, Lock, ArrowRight, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -126,11 +126,20 @@ export default function AppNavbar() {
 
                             {user ? (
                                 <div className="flex items-center gap-2">
-                                    <Link href="/dashboard" className="flex flex-col items-end mr-2 cursor-pointer group/member hover:opacity-80 transition-opacity">
-                                        <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest group-hover/member:text-secondary/70 transition-colors">Active Member</span>
-                                        <span className="text-secondary font-display font-bold text-sm">
-                                            {user.phone ? `+${user.phone.slice(-10)}` : user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Portal'}
-                                        </span>
+                                    <Link href="/dashboard" className="flex items-center gap-2 md:gap-3 cursor-pointer group/member hover:bg-white/5 p-1 md:p-1.5 pr-2 rounded-xl transition-colors mr-1">
+                                        <div className="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/20 flex items-center justify-center shrink-0 overflow-hidden group-hover/member:border-secondary/40 transition-colors">
+                                            {user.user_metadata?.avatar_url ? (
+                                                <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User size={16} className="text-secondary" />
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col items-start hidden sm:flex">
+                                            <span className="text-[9px] text-secondary/40 font-bold uppercase tracking-widest group-hover/member:text-secondary/70 transition-colors">My Profile</span>
+                                            <span className="text-secondary font-display font-medium text-xs max-w-[80px] lg:max-w-[120px] truncate">
+                                                {user.user_metadata?.full_name ? user.user_metadata.full_name.split(' ')[0] : (user.phone ? `+${user.phone.slice(-10)}` : user.email?.split('@')[0] || 'Portal')}
+                                            </span>
+                                        </div>
                                     </Link>
                                     <button
                                         onClick={handleLogout}
