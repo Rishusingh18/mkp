@@ -11,6 +11,30 @@ import { Calendar as CalendarIcon, ChevronDown, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import FAQItem from "@/components/FAQItem";
+
+const faqs = [
+  {
+    question: "How long does a typical local move take?",
+    answer: "A standard local move (within the same city) usually takes 1-2 days. The first day is dedicated to packing and the second day for transportation and unloading. The exact timeline depends on the size of your inventory."
+  },
+  {
+    question: "Are my belongings insured during the move?",
+    answer: "Yes, we provide comprehensive transit insurance for all your belongings. Our estimator will discuss the valuation and coverage details with you during the initial survey to ensure you have complete peace of mind."
+  },
+  {
+    question: "Do you provide packing materials?",
+    answer: "Absolutely. We use premium, industry-grade packing materials including sturdy corrugated boxes, bubble wrap, foam sheets, and specialized cartons for fragile items like electronics and artwork. All standard packing materials are included in your quote."
+  },
+  {
+    question: "How far in advance should I book my move?",
+    answer: "We recommend booking at least 2-3 weeks in advance for local moves and 4-6 weeks for intercity or international relocations, especially during peak moving seasons (summer months and month-ends)."
+  },
+  {
+    question: "What happens if my move date changes?",
+    answer: "We understand that plans can change. You can reschedule your move up to 72 hours before the scheduled packing date without any penalty. Please contact your dedicated relocation manager to adjust the timeline."
+  }
+];
 
 export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
@@ -309,6 +333,22 @@ export default function Home() {
                   <p className="text-primary/70 leading-relaxed text-sm md:text-base">{step.desc}</p>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-background-light py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-4xl text-primary font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-primary/70 text-lg">Find answers to common questions about our corporate and residential relocation services.</p>
+          </div>
+          
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <FAQItem key={index} question={faq.question} answer={faq.answer} />
             ))}
           </div>
         </div>
