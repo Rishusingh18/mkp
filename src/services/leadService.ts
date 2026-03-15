@@ -46,11 +46,12 @@ export const leadService = {
         return data;
     },
 
-    async getUserLeads() {
-        console.log("Supabase call: getUserLeads");
+    async getUserLeads(userId: string) {
+        console.log("Supabase call: getUserLeads for", userId);
         const { data, error } = await supabase
             .from('leads')
             .select('*')
+            .eq('user_id', userId)
             .order('created_at', { ascending: false });
 
         if (error) {

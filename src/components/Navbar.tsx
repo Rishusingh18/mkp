@@ -126,10 +126,12 @@ export default function AppNavbar() {
 
                             {user ? (
                                 <div className="flex items-center gap-2">
-                                    <div className="flex flex-col items-end mr-2">
-                                        <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest">Active Member</span>
-                                        <span className="text-secondary font-display font-bold text-sm">+{user.phone?.slice(-10)}</span>
-                                    </div>
+                                    <Link href="/dashboard" className="flex flex-col items-end mr-2 cursor-pointer group/member hover:opacity-80 transition-opacity">
+                                        <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest group-hover/member:text-secondary/70 transition-colors">Active Member</span>
+                                        <span className="text-secondary font-display font-bold text-sm">
+                                            {user.phone ? `+${user.phone.slice(-10)}` : user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Portal'}
+                                        </span>
+                                    </Link>
                                     <button
                                         onClick={handleLogout}
                                         className="bg-white/10 hover:bg-white/20 text-secondary h-12 w-12 rounded-xl flex items-center justify-center transition-all cursor-pointer group shadow-lg"
