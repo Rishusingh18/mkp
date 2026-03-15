@@ -3,16 +3,23 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { leadService, LeadData } from "@/services/leadService";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export default function Summary() {
     const [lead, setLead] = useState<LeadData | null>(null);
+    const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [confirming, setConfirming] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
+        // Check for user session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null);
+        });
+
         console.log("Summary page mounted, checking leadId...");
         const fetchLead = async () => {
             const leadId = localStorage.getItem("current_lead_id");
@@ -198,9 +205,9 @@ export default function Summary() {
                             <div className="pt-14 pb-6">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-serif font-bold text-secondary">Sarah Jenkins</h3>
+                                        <h3 className="text-xl font-serif font-bold text-secondary">Manoj Kumar Pandey</h3>
                                         <p className="text-sm text-secondary/80 font-medium mb-1">Senior Relocation Manager</p>
-                                        <p className="text-xs text-secondary/60">MKP Elite Team • 8 Yrs Experience</p>
+                                        <p className="text-xs text-secondary/60">MKP Elite Team • 10 Yrs Experience</p>
                                     </div>
                                     <img alt="LinkedIn" className="w-6 h-6 opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbrSATt6f1KKfhovkW-OzSx1BmApMHkIpGqVHTVfZDm58mW9MH8x8W0l3F-7vwoUSVSj6ZMKA7hFVMfBwNItJRPi3NwFmWw9iVmS5DZ-8X-lpLSpNyRGt1qbwNyDgJCRukMi6j3RbLPEGMW_N2TuarnZiXaarFFiAnzfBm06S6Ayr_yhi4j6fmN-Zlh3SY9bjoBXl3R--z31KskIXv0B-TkjioYitopAN7APdyweXUw1a9R2a7y6O5kiExiUYoNhsBlie4v0mxz2Be" />
                                 </div>
@@ -211,7 +218,7 @@ export default function Summary() {
                                     </div>
                                     <div className="flex items-center gap-3 text-sm text-secondary">
                                         <span className="material-icons-outlined text-secondary">language</span>
-                                        <span>Speaks English, Spanish</span>
+                                        <span>Speaks English, Hindi</span>
                                     </div>
                                 </div>
                                 <div className="mt-6 flex gap-3">
@@ -240,7 +247,18 @@ export default function Summary() {
                         </ul>
                     </div>
 
-                    <div className="sticky bottom-6">
+                    <div className="sticky bottom-6 space-y-4">
+                        {!user && (
+                            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl flex items-start gap-3">
+                                <span className="material-icons-outlined text-blue-500 text-xl mt-0.5">info</span>
+                                <div>
+                                    <p className="text-sm text-blue-500 font-medium">Want to track your relocation?</p>
+                                    <p className="text-xs text-blue-500/80 mt-1">
+                                        You are currently proceeding as a guest. Create an account or log in via the menu to securely track this process and access your Client Portal.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <button
                             onClick={handleConfirmBooking}
                             disabled={confirming || lead.status === 'submitted' || submitted}
@@ -249,7 +267,7 @@ export default function Summary() {
                             {submitted || lead.status === 'submitted' ? "Request Submitted" : confirming ? "Submitting..." : "Submit Relocation Request"}
                             {!confirming && !submitted && lead.status !== 'submitted' && <span className="material-icons-outlined">send</span>}
                         </button>
-                        <p className="text-center text-xs text-primary/60 mt-3 font-semibold">By submitting, our manager will reach out for a final walkthrough.</p>
+                        <p className="text-center text-xs text-primary/60 font-semibold">By submitting, our manager will reach out for a final walkthrough.</p>
                     </div>
                 </div>
             </div>

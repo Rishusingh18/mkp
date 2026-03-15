@@ -14,6 +14,14 @@ export interface LeadData {
     customer_phone?: string;
 }
 
+export interface ProfileData {
+    id: string;
+    full_name?: string;
+    phone?: string;
+    address?: string;
+    avatar_url?: string;
+}
+
 export const leadService = {
     async createLead(lead: LeadData) {
         console.log("Supabase call: createLead", lead);
@@ -87,6 +95,48 @@ export const leadService = {
             console.error("Supabase error in getAllLeads:", error);
             throw error;
         }
-        return data;
+        return data as LeadData[];
+    },
+
+    async getProfile(userId: string) {
+        console.log("Supabase call: getProfile", userId);
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+            console.error("Supabase error in getProfile:", error);
+            throw error;
+        }
+        return data as ProfileData | null;
+    },
+
+    async updateProfile(userId: string, updates: Partial<ProfileData>) {
+        console.log("Supabase call: updateProfile", userId, updates);
+        const { data, error } = await supabase
+            .from('profiles')
+            .upsert({ id: userId, ...updates, updated_at: new Date().toISOString() })
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Supabase error in updateProfile:", error);
+            throw error;
+        }
+
+        // Inform auth metadata if applicable
+        const authUpdates: any = {};
+        if (updates.full_name) authUpdates.full_name = updates.full_name;
+        if (updates.phone) authUpdates.phone = updates.phone;
+        
+        if (Object.keys(authUpdates).length > 0) {
+            await supabase.auth.updateUser({
+                data: authUpdates
+            });
+        }
+
+        return data as ProfileData;
     }
 };

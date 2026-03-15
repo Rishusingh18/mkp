@@ -43,6 +43,7 @@ export default function Home() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const router = useRouter();
 
@@ -57,6 +58,9 @@ export default function Home() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        leadService.getProfile(session.user.id).then((p) => setProfile(p));
+      }
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -82,10 +86,14 @@ export default function Home() {
 
     setLoading(true);
     try {
+      // Prioritize explicit guestData (from AuthModal) > DB Profile > Auth Metadata
+      const leadName = guestData?.full_name || profile?.full_name || user?.user_metadata?.full_name || null;
+      const leadPhone = guestData?.phone || profile?.phone || user?.phone || null;
+
       const lead = await leadService.createLead({
         user_id: user?.id || null,
-        customer_name: guestData?.full_name || null,
-        customer_phone: guestData?.phone || null,
+        customer_name: leadName,
+        customer_phone: leadPhone,
         pickup_city: source,
         destination_city: destination,
         moving_date: format(selectedDate, "yyyy-MM-dd"),
@@ -108,6 +116,11 @@ export default function Home() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        initialData={{
+           full_name: profile?.full_name || user?.user_metadata?.full_name,
+           phone: profile?.phone || user?.phone,
+           email: user?.email
+        }}
         onSuccess={(u) => {
           setIsAuthModalOpen(false);
           // Directly proceed with the captured guest data

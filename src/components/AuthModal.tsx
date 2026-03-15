@@ -9,9 +9,10 @@ interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: (user: any) => void;
+    initialData?: { full_name?: string; phone?: string; email?: string } | null;
 }
 
-export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: AuthModalProps) {
     const [step, setStep] = useState<"phone" | "otp" | "success">("phone");
     const [authMode, setAuthMode] = useState<"login" | "register">("login");
     const [fullName, setFullName] = useState("");
@@ -31,8 +32,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 setError(null);
                 setLoading(false);
             }, 300);
+        } else if (initialData) {
+            if (initialData.full_name) setFullName(initialData.full_name);
+            if (initialData.email) setEmail(initialData.email);
+            if (initialData.phone) setPhone(initialData.phone.replace('+91', ''));
         }
-    }, [isOpen]);
+    }, [isOpen, initialData]);
 
     const handleProceed = async (e: React.FormEvent) => {
         e.preventDefault();
