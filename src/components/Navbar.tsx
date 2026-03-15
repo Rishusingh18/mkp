@@ -136,9 +136,15 @@ export default function AppNavbar() {
                                         </div>
                                         <div className="flex flex-col items-start hidden sm:flex">
                                             <span className="text-[9px] text-secondary/40 font-bold uppercase tracking-widest group-hover/member:text-secondary/70 transition-colors">My Profile</span>
-                                            <span className="text-secondary font-display font-medium text-xs max-w-[80px] lg:max-w-[120px] truncate">
-                                                {user.user_metadata?.full_name ? user.user_metadata.full_name.split(' ')[0] : (user.phone ? `+${user.phone.slice(-10)}` : user.email?.split('@')[0] || 'Portal')}
-                                            </span>
+                                            {(() => {
+                                                const displayName = user.user_metadata?.full_name ? user.user_metadata.full_name.split(' ')[0] : (user.phone ? `+${user.phone.slice(-10)}` : user.email?.split('@')[0] || 'Portal');
+                                                const isLong = displayName.length > 8;
+                                                return (
+                                                    <span className={`text-secondary font-display font-medium ${isLong ? 'text-[10px]' : 'text-xs'} max-w-[80px] lg:max-w-[120px] truncate`}>
+                                                        {displayName}
+                                                    </span>
+                                                )
+                                            })()}
                                         </div>
                                     </Link>
                                     <button
