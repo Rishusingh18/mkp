@@ -13,9 +13,9 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="flex space-x-8 text-xs uppercase tracking-widest font-medium">
-                        <a href="#" className="hover:text-secondary text-background-light/60 transition-colors py-2">Privacy Policy</a>
-                        <a href="#" className="hover:text-secondary text-background-light/60 transition-colors py-2">Terms of Use</a>
-                        <a href="#" className="hover:text-secondary text-background-light/60 transition-colors py-2">Contact Support</a>
+                        <Link href="/privacy-policy" className="hover:text-secondary text-background-light/60 transition-colors py-2">Privacy Policy</Link>
+                        <Link href="/terms-of-use" className="hover:text-secondary text-background-light/60 transition-colors py-2">Terms of Use</Link>
+                        <Link href="/contact" className="hover:text-secondary text-background-light/60 transition-colors py-2">Contact Support</Link>
                     </div>
                 </div>
             </footer>

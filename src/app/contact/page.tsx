@@ -1,9 +1,46 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, MessageCircle, ArrowRight } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 export default function ContactPage() {
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [query, setQuery] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!name || !phone || !query) {
+            toast.error("Please fill out all required fields.");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const { error } = await supabase
+                .from('contact_queries')
+                .insert([
+                    { name, phone, query }
+                ]);
+
+            if (error) throw error;
+
+            toast.success("Query submitted successfully! We will get back to you soon.");
+            setName('');
+            setPhone('');
+            setQuery('');
+        } catch (error: any) {
+            console.error("Error submitting query:", error);
+            toast.error("Failed to submit query. Please try again or contact us directly via WhatsApp.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     return (
         <div className="min-h-screen bg-background-light pt-8 md:pt-20 pb-12 lg:pb-20">
             {/* 1. TOP SECTION (Info Grid) */}
@@ -105,14 +142,17 @@ export default function ContactPage() {
                     </div>
 
                     <div className="w-full">
-                        <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
+                        <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
                             {/* Full Name */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-primary ml-2 uppercase tracking-wide">Your Name <span className="text-red-500">*</span></label>
                                 <input 
                                     type="text" 
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
                                     placeholder="Enter your name..." 
                                     className="w-full px-4 py-3 bg-primary/5 border border-primary/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-primary placeholder:text-primary/40 transition-all"
+                                    required
                                 />
                             </div>
 
@@ -121,8 +161,11 @@ export default function ContactPage() {
                                 <label className="text-xs font-bold text-primary ml-2 uppercase tracking-wide">Your Phone No. <span className="text-red-500">*</span></label>
                                 <input 
                                     type="tel" 
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
                                     placeholder="Enter your phone number..." 
                                     className="w-full px-4 py-3 bg-primary/5 border border-primary/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-primary placeholder:text-primary/40 transition-all"
+                                    required
                                 />
                             </div>
 
@@ -131,14 +174,28 @@ export default function ContactPage() {
                                 <label className="text-xs font-bold text-primary ml-2 uppercase tracking-wide">Your Query <span className="text-red-500">*</span></label>
                                 <textarea 
                                     rows={4}
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
                                     placeholder="Write your query here..." 
                                     className="w-full px-4 py-3 bg-primary/5 border border-primary/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 text-primary placeholder:text-primary/40 transition-all resize-y"
+                                    required
                                 ></textarea>
                             </div>
 
                             <div className="md:col-span-2 mt-6 md:mt-10 flex justify-center">
-                                <button type="submit" className="bg-primary hover:bg-primary-hover text-secondary px-12 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl w-full sm:w-auto hover:-translate-y-1">
-                                    Send Message
+                                <button 
+                                    type="submit" 
+                                    disabled={isSubmitting}
+                                    className="bg-primary hover:bg-primary-hover text-secondary px-12 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl w-full sm:w-auto hover:-translate-y-1 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-secondary/30 border-t-secondary rounded-full animate-spin"></div>
+                                            Sending...
+                                        </>
+                                    ) : (
+                                        "Send Message"
+                                    )}
                                 </button>
                             </div>
                         </form>
