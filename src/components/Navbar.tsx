@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, X, Lock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
@@ -59,8 +60,8 @@ export default function AppNavbar() {
                     <div className="flex flex-1 items-center gap-4 lg:gap-8 justify-between lg:justify-start w-full">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group shrink-0 h-full">
-                            <div className="h-10 w-10 md:h-12 md:w-12 bg-secondary rounded-xl flex items-center justify-center text-primary font-serif font-bold text-xl md:text-2xl group-hover:bg-secondary/95 transition-all shadow-inner shrink-0 pointer-events-auto">
-                                M
+                            <div className="relative h-10 w-10 md:h-12 md:w-12 bg-primary rounded-xl overflow-hidden flex items-center justify-center shrink-0 pointer-events-auto border border-secondary/20 group-hover:border-secondary/50 transition-colors shadow-inner">
+                                <Image src="/logo.png" alt="MKP Global Mobility Logo" fill className="object-cover" />
                             </div>
                             <div className="flex flex-col justify-center leading-tight">
                                 <span className="font-serif text-secondary text-base md:text-xl font-bold tracking-tight md:tracking-wider">MKP</span>

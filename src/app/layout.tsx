@@ -22,6 +22,10 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "MKP Packers & Movers",
   description: "Corporate Relocation Services",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 import { Toaster } from "sonner";
