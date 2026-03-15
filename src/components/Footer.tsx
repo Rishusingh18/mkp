@@ -19,7 +19,7 @@ export default function Footer() {
                             <Link href="/contact" className="hover:text-secondary text-background-light/60 transition-colors py-2">Contact Support</Link>
                         </div>
                         <div className="flex space-x-6 text-background-light/40">
-                            <a href="https://www.instagram.com/mkppackersmovers?utm_source=qr&igsh=MXN2dmk4aW9uemhmcQ==" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">
+                            <a href="https://www.instagram.com/mkppackersmovers/" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">
                                 <Instagram size={20} />
                             </a>
                             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">
