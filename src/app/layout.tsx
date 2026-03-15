@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({
   children,
@@ -42,6 +43,7 @@ export default function RootLayout({
       >
         <Toaster position="bottom-right" theme="dark" closeButton richColors />
         <Navbar />
+        <Analytics />
         <div className="flex-1 pt-18 flex flex-col">
           {children}
         </div>
