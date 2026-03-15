@@ -102,6 +102,10 @@ export default function UserDashboard() {
 
             const updatedProfile = await leadService.updateProfile(user.id, updates);
             setProfile(updatedProfile);
+            
+            // Re-fetch Leads to capture any guest leads associated with the new phone number
+            const userLeads = await leadService.getUserLeads(user.id, updatedProfile.phone || editPhone);
+            setLeads(userLeads || []);
             setIsEditingProfile(false);
             toast.success("Profile updated successfully!");
         } catch (error) {
