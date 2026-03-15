@@ -50,24 +50,27 @@ export default function UserDashboard() {
 
                 setUser(session.user);
                 
-                // Fetch Profile and Leads in parallel
-                const [userLeads, userProfile] = await Promise.all([
-                    leadService.getUserLeads(session.user.id),
-                    leadService.getProfile(session.user.id)
-                ]);
-
-                setLeads(userLeads || []);
+                // Fetch Profile first to get potential linked phone number
+                const userProfile = await leadService.getProfile(session.user.id);
+                
+                let phoneToSearch = session.user.phone || "";
                 
                 if (userProfile) {
                     setProfile(userProfile);
                     setEditName(userProfile.full_name || session.user.user_metadata?.full_name || "");
                     setEditPhone(userProfile.phone || session.user.phone || "");
                     setEditAddress(userProfile.address || "");
+                    phoneToSearch = userProfile.phone || phoneToSearch;
                 } else {
                     // Fallback to auth metadata if no profile row yet
                     setEditName(session.user.user_metadata?.full_name || "");
                     setEditPhone(session.user.phone || "");
                 }
+
+                // Fetch Leads using userId AND Phone to capture previously submitted guest leads
+                const userLeads = await leadService.getUserLeads(session.user.id, phoneToSearch);
+                setLeads(userLeads || []);
+
             } catch (error) {
                 console.error("Dashboard error:", error);
                 toast.error("Failed to load dashboard data.");

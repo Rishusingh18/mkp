@@ -48,10 +48,6 @@ export default function AppNavbar() {
         return () => authListener.subscription.unsubscribe();
     }, []);
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-    };
-
     return (
         <div className="relative w-full">
             <Navbar>
@@ -147,12 +143,6 @@ export default function AppNavbar() {
                                             })()}
                                         </div>
                                     </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="bg-white/10 hover:bg-white/20 text-secondary h-12 w-12 rounded-xl flex items-center justify-center transition-all cursor-pointer group shadow-lg"
-                                    >
-                                        <X size={18} className="group-hover:scale-110 transition-transform" />
-                                    </button>
                                 </div>
                             ) : (
                                 <NavbarButton onClick={() => router.push('/login')} className="whitespace-nowrap">
@@ -211,20 +201,19 @@ export default function AppNavbar() {
                         <div className="flex w-full flex-col gap-4 mt-8 pointer-events-auto">
                             {user ? (
                                 <>
-                                    <div className="bg-white/5 p-6 rounded-2xl border border-secondary/10">
-                                        <div className="flex items-center justify-between mb-4">
+                                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="bg-white/5 p-6 rounded-2xl border border-secondary/10 block hover:bg-white/10 transition-colors">
+                                        <div className="flex items-center justify-between">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest mb-1">Authenticated</span>
-                                                <span className="text-secondary font-display font-bold text-lg">+{user.phone?.slice(-10)}</span>
+                                                <span className="text-[10px] text-secondary/40 font-bold uppercase tracking-widest mb-1">My Dashboard</span>
+                                                <span className="text-secondary font-display font-bold text-lg">
+                                                    {user.user_metadata?.full_name ? user.user_metadata.full_name : (user.phone ? `+${user.phone.slice(-10)}` : user.email?.split('@')[0] || 'Portal')}
+                                                </span>
                                             </div>
-                                            <button
-                                                onClick={handleLogout}
-                                                className="p-3 bg-secondary/10 hover:bg-secondary/20 text-secondary rounded-xl transition-all"
-                                            >
-                                                <X size={20} />
-                                            </button>
+                                            <div className="p-3 bg-secondary/10 text-secondary rounded-xl">
+                                                <User size={20} />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </>
                             ) : (
                                 <button

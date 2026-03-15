@@ -54,13 +54,19 @@ export const leadService = {
         return data;
     },
 
-    async getUserLeads(userId: string) {
-        console.log("Supabase call: getUserLeads for", userId);
-        const { data, error } = await supabase
-            .from('leads')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false });
+    async getUserLeads(userId: string, userPhone?: string) {
+        console.log("Supabase call: getUserLeads for", userId, userPhone);
+        
+        let query = supabase.from('leads').select('*');
+        
+        if (userPhone) {
+            // Include leads matching the user_id OR the exact customer_phone
+            query = query.or(`user_id.eq.${userId},customer_phone.eq.${userPhone}`);
+        } else {
+            query = query.eq('user_id', userId);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: false });
 
         if (error) {
             console.error("Supabase error in getUserLeads:", error);
