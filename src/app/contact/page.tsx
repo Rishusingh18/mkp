@@ -23,7 +23,7 @@ export default function ContactPage() {
                             <div>
                                 <h3 className="text-primary font-bold mb-1 whitespace-nowrap">Our Address</h3>
                                 <div className="text-primary/70 text-sm leading-relaxed inline-block">
-                                    MKP Global Mobility<br />
+                                    MKP Packers & Movers<br />
                                     Corporate Headquarters
                                 </div>
                             </div>
@@ -31,7 +31,7 @@ export default function ContactPage() {
 
                         {/* Phone / WhatsApp Combined */}
                         <a 
-                            href="https://wa.me/918787052894?text=Hello%20MKP%20Global%20Mobility,%20I%20would%20like%20to%20inquire%20about%20your%20services." 
+                            href="https://wa.me/918787052894?text=Hello%20MKP%20Packers%20&%20Movers,%20I%20would%20like%20to%20inquire%20about%20your%20services." 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="flex flex-col items-center text-center gap-3 group cursor-pointer"

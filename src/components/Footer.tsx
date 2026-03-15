@@ -8,7 +8,7 @@ export default function Footer() {
                     <div className="flex items-center gap-4">
                         <div className="h-8 w-8 bg-secondary rounded flex items-center justify-center text-primary font-serif font-bold text-lg">M</div>
                         <div className="text-sm">
-                            <span className="block font-bold text-secondary">MKP Global Mobility</span>
+                            <span className="block font-bold text-secondary">MKP Packers & Movers</span>
                             <span className="text-xs uppercase tracking-tighter text-background-light/40">© {new Date().getFullYear()} All rights reserved.</span>
                         </div>
                     </div>

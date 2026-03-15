@@ -407,7 +407,7 @@ export default function Home() {
 
       <div className="fixed bottom-6 right-6 z-50">
         <a 
-            href="https://wa.me/918787052894?text=Hello%20MKP%20Global%20Mobility,%20I%20would%20like%20to%20inquire%20about%20your%20relocation%20services."
+            href="https://wa.me/918787052894?text=Hello%20MKP%20Packers%20&%20Movers,%20I%20would%20like%20to%20inquire%20about%20your%20relocation%20services."
             target="_blank"
             rel="noopener noreferrer"
             className="w-14 h-14 bg-primary hover:bg-primary-hover text-secondary rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-primary/50 cursor-pointer"

@@ -32,14 +32,8 @@ export default function ServicesPage() {
                 </motion.div>
             </section>
 
-
             {/* 3. CORE SERVICES GRID (The 6 Main Items) */}
             <section className="max-w-[1400px] mx-auto px-6 md:px-12 mb-24 lg:mb-32">
-                <div className="text-center mb-16">
-                    <span className="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Comprehensive Portfolio</span>
-                    <h2 className="text-4xl md:text-5xl font-display font-bold text-primary">Core Services</h2>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
                     {[

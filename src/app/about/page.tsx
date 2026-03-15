@@ -67,7 +67,7 @@ export default function AboutPage() {
                         About Us
                     </h1>
                     <p className="text-primary/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                        Discover the passion, experience, and leadership behind MKP Global Mobility. We are dedicated to providing seamless relocation experiences across India and beyond.
+                        Discover the passion, experience, and leadership behind MKP Packers & Movers. We are dedicated to providing seamless relocation experiences across India and beyond.
                     </p>
                 </motion.div>
             </section>
@@ -87,7 +87,7 @@ export default function AboutPage() {
                         </h2>
                         <div className="space-y-6 text-primary/70 leading-relaxed text-lg">
                             <p>
-                                Welcome to MKP Global Mobility. We have been in the relocation business for <span className="text-primary font-bold">more than 10 years</span>, proudly serving our clients with our team of expert locators, packers, and movers.
+                                Welcome to MKP Packers & Movers. We have been in the relocation business for <span className="text-primary font-bold">more than 10 years</span>, proudly serving our clients with our team of expert locators, packers, and movers.
                             </p>
                             <p>
                                 Based originally out of Varanasi, Uttar Pradesh, we have grown into one of the most reputed and trusted logistics agencies. Whether you are shifting goods within your current city or moving your entire life between cities, our highly qualified and experienced professionals ensure a stress-free transition.
@@ -107,6 +107,17 @@ export default function AboutPage() {
                                 <Users className="text-background-light mb-4" size={32} />
                                 <h4 className="text-2xl font-display font-bold text-background-light mb-1">Expert</h4>
                                 <p className="text-sm font-bold text-background-light/70 uppercase tracking-wide">Movers & Packers</p>
+                            </div>
+                        </div>
+
+                        {/* GST Certification Badge */}
+                        <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 rounded-2xl bg-secondary/10 border border-secondary/20 hover:bg-secondary/20 transition-colors w-full sm:w-max group cursor-default">
+                            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-secondary shadow-lg group-hover:scale-110 transition-transform flex-shrink-0">
+                                <ShieldCheck size={24} />
+                            </div>
+                            <div>
+                                <h4 className="text-primary font-bold tracking-wide">Government Approved & Certified</h4>
+                                <p className="text-primary/70 text-sm font-mono mt-0.5 font-semibold">GSTIN: 09AMKPP6212B2Z6</p>
                             </div>
                         </div>
                     </motion.div>
@@ -252,7 +263,7 @@ export default function AboutPage() {
                         answer="We offer a comprehensive suite including home relocation, corporate relocation, car carrier services, loading & unloading, packing & unpacking, and unpacking & rearranging services."
                     />
                     <FAQItem
-                        question="Why should I choose MKP Global Mobility?"
+                        question="Why should I choose MKP Packers & Movers?"
                         answer="We are a reliable name in the logistics field with a professionally trained team. We use the best quality multi-layered packaging materials and closed containers to ensure absolute zero-risk transportation of your valuable goods."
                     />
                     <FAQItem

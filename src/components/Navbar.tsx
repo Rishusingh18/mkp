@@ -61,11 +61,11 @@ export default function AppNavbar() {
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group shrink-0 h-full">
                             <div className="relative h-10 w-10 md:h-12 md:w-12 bg-primary rounded-xl overflow-hidden flex items-center justify-center shrink-0 pointer-events-auto border border-secondary/20 group-hover:border-secondary/50 transition-colors shadow-inner">
-                                <Image src="/logo.png" alt="MKP Global Mobility Logo" fill className="object-cover" />
+                                <Image src="/logo.png" alt="MKP Packers & Movers Logo" fill priority sizes="(max-width: 768px) 40px, 48px" className="object-cover" />
                             </div>
                             <div className="flex flex-col justify-center leading-tight">
                                 <span className="font-serif text-secondary text-base md:text-xl font-bold tracking-tight md:tracking-wider">MKP</span>
-                                <span className="text-[7px] md:text-[9px] text-secondary/50 uppercase tracking-[0.25em] font-sans font-bold">Global Mobility</span>
+                                <span className="text-[7px] md:text-[9px] text-secondary/50 uppercase tracking-[0.25em] font-sans font-bold">Packers & Movers</span>
                             </div>
                         </Link>
 
