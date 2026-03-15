@@ -60,8 +60,19 @@ export const leadService = {
         let query = supabase.from('leads').select('*');
         
         if (userPhone) {
-            // Include leads matching the user_id OR the exact customer_phone
-            query = query.or(`user_id.eq.${userId},customer_phone.eq.${userPhone}`);
+            // Clean phone number (remove spaces, dashes)
+            const cleanPhone = userPhone.replace(/[\s-]/g, '');
+            // Create variants: with +91, with 91, and just the raw 10 digits
+            let basePhone = cleanPhone;
+            if (cleanPhone.startsWith('+91')) basePhone = cleanPhone.substring(3);
+            else if (cleanPhone.startsWith('91') && cleanPhone.length === 12) basePhone = cleanPhone.substring(2);
+            
+            const variant1 = basePhone; // e.g., 9310138154
+            const variant2 = `+91${basePhone}`; // e.g., +919310138154
+            const variant3 = `91${basePhone}`; // e.g., 919310138154
+
+            // Include leads matching the user_id OR any of the phone variants
+            query = query.or(`user_id.eq.${userId},customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}`);
         } else {
             query = query.eq('user_id', userId);
         }
