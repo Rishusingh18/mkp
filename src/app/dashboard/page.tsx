@@ -69,7 +69,8 @@ export default function UserDashboard() {
                 }
 
                 // Fetch Leads using userId AND Phone to capture previously submitted guest leads
-                const userLeads = await leadService.getUserLeads(session.user.id, phoneToSearch);
+                const userNameToSearch = userProfile?.full_name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+                const userLeads = await leadService.getUserLeads(session.user.id, phoneToSearch, userNameToSearch);
                 setLeads(userLeads || []);
 
             } catch (error) {
@@ -105,7 +106,8 @@ export default function UserDashboard() {
             setProfile(updatedProfile);
             
             // Re-fetch Leads to capture any guest leads associated with the new phone number
-            const userLeads = await leadService.getUserLeads(user.id, updatedProfile.phone || editPhone);
+            const userNameToSearch = updatedProfile.full_name || user.user_metadata?.full_name || user.user_metadata?.name || editName;
+            const userLeads = await leadService.getUserLeads(user.id, updatedProfile.phone || editPhone, userNameToSearch);
             setLeads(userLeads || []);
             setIsEditingProfile(false);
             toast.success("Profile updated successfully!");

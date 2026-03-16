@@ -86,8 +86,8 @@ export default function Home() {
 
     setLoading(true);
     try {
-      // Prioritize explicit guestData (from AuthModal) > DB Profile > Auth Metadata
-      const leadName = guestData?.full_name || profile?.full_name || user?.user_metadata?.full_name || null;
+      // Prioritize explicit guestData (from AuthModal) > DB Profile > Auth Metadata > Google Auth Name
+      const leadName = guestData?.full_name || profile?.full_name || user?.user_metadata?.full_name || user?.user_metadata?.name || null;
       const leadPhone = guestData?.phone || profile?.phone || user?.phone || null;
 
       const lead = await leadService.createLead({

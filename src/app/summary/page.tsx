@@ -7,65 +7,72 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export default function Summary() {
-    const [lead, setLead] = useState<LeadData | null>(null);
+    const [leads, setLeads] = useState<LeadData[]>([]);
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [confirming, setConfirming] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    const [confirmingId, setConfirmingId] = useState<string | null>(null);
+    const [submittedIds, setSubmittedIds] = useState<Record<string, boolean>>({});
     const router = useRouter();
 
     useEffect(() => {
-        // Check for user session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-        });
-
-        console.log("Summary page mounted, checking leadId...");
-        const fetchLead = async () => {
-            const leadId = localStorage.getItem("current_lead_id");
-            console.log("leadId from localStorage:", leadId);
-
-            if (!leadId) {
-                console.log("No leadId found.");
-                setLoading(false);
-                return;
-            }
-
+        const fetchLeads = async () => {
             try {
-                console.log("Fetching lead data for ID:", leadId);
-                const currentLead = await leadService.getLeadById(leadId);
-                console.log("Lead data received:", currentLead);
-                if (currentLead) {
-                    setLead(currentLead);
-                    console.log("Lead state updated with fetched data.");
-                } else {
-                    console.log("Lead not found in database.");
+                // Check for user session
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUser = session?.user ?? null;
+                setUser(currentUser);
+
+                let fetchedLeads: LeadData[] = [];
+
+                if (currentUser) {
+                    const userProfile = await leadService.getProfile(currentUser.id);
+                    const phone = userProfile?.phone || currentUser.phone || "";
+                    const userNameToSearch = userProfile?.full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || "";
+                    const userLeads = await leadService.getUserLeads(currentUser.id, phone, userNameToSearch);
+                    fetchedLeads = userLeads?.filter(l => l.status !== 'completed' && l.status !== 'cancelled') || [];
                 }
+
+                // If no leads found via user, fallback to local storage
+                if (fetchedLeads.length === 0) {
+                    const leadId = localStorage.getItem("current_lead_id");
+                    if (leadId) {
+                        const localLead = await leadService.getLeadById(leadId);
+                        if (localLead && localLead.status !== 'completed' && localLead.status !== 'cancelled') {
+                            fetchedLeads = [localLead];
+                        }
+                    }
+                }
+
+                setLeads(fetchedLeads);
             } catch (err) {
-                console.error("Error fetching lead:", err);
+                console.error("Error fetching leads:", err);
             } finally {
                 setLoading(false);
-                console.log("Lead fetching process finished.");
             }
         };
 
-        fetchLead();
+        fetchLeads();
     }, [router]);
 
-    const handleConfirmBooking = async () => {
-        if (!lead?.id) return;
-        setConfirming(true);
+    const handleConfirmBooking = async (leadId: string) => {
+        if (!leadId) return;
+        setConfirmingId(leadId);
         try {
-            console.log(`Attempting to submit request for lead ID: ${lead.id}`);
-            await leadService.updateLead(lead.id, { status: 'submitted' });
+            console.log(`Attempting to submit request for lead ID: ${leadId}`);
+            await leadService.updateLead(leadId, { status: 'submitted' });
             console.log("Request successfully submitted.");
-            setSubmitted(true);
+            
+            setSubmittedIds(prev => ({ ...prev, [leadId]: true }));
+            
+            // Update the lead status in local state so UI updates immediately
+            setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: 'submitted' } : l));
+            
             toast.success("Request Submitted! Our representative will contact you shortly with a personalized quote.");
         } catch (err) {
             console.error("Error submitting request:", err);
             toast.error("Failed to submit request. Please try again.");
         } finally {
-            setConfirming(false);
+            setConfirmingId(null);
         }
     };
 
@@ -80,7 +87,7 @@ export default function Summary() {
         );
     }
 
-    if (!lead) {
+    if (leads.length === 0) {
         return (
             <div className="flex-grow flex items-center justify-center bg-background-light dark:bg-background-dark py-20 px-4">
                 <div className="max-w-md w-full text-center space-y-6 bg-white dark:bg-primary/50 p-8 rounded-3xl border border-primary/10 shadow-xl">
@@ -106,7 +113,10 @@ export default function Summary() {
     return (
         <main className="flex-grow z-10 py-12 px-4 sm:px-6 lg:px-8 bg-background-light relative">
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2760%27%20height%3D%2760%27%20viewBox%3D%270%200%2060%2060%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cg%20fill%3D%27none%27%20fill-rule%3D%27evenodd%27%3E%3Cg%20fill%3D%27%230e1c4f%27%3E%3Cpath%20d%3D%27M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%27%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')]"></div>
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
+            
+            <div className="max-w-6xl mx-auto space-y-12 relative">
+                {leads.map((lead) => (
+                    <div key={lead.id} className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
                 <div className="lg:col-span-8 space-y-6">
                     <div className="bg-primary rounded-xl shadow-sm border border-secondary/20 p-6">
                         <div className="flex items-center justify-between mb-2">
@@ -260,16 +270,18 @@ export default function Summary() {
                             </div>
                         )}
                         <button
-                            onClick={handleConfirmBooking}
-                            disabled={confirming || lead.status === 'submitted' || submitted}
+                            onClick={() => handleConfirmBooking(lead.id!)}
+                            disabled={confirmingId === lead.id || lead.status === 'submitted' || submittedIds[lead.id ?? '']}
                             className="w-full bg-primary hover:bg-primary/90 text-secondary font-bold text-lg py-4 px-6 rounded-xl shadow-elegant transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border border-secondary/20 disabled:opacity-70"
                         >
-                            {submitted || lead.status === 'submitted' ? "Request Submitted" : confirming ? "Submitting..." : "Submit Relocation Request"}
-                            {!confirming && !submitted && lead.status !== 'submitted' && <span className="material-icons-outlined">send</span>}
+                            {submittedIds[lead.id ?? ''] || lead.status === 'submitted' ? "Request Submitted" : confirmingId === lead.id ? "Submitting..." : "Submit Relocation Request"}
+                            {confirmingId !== lead.id && !submittedIds[lead.id ?? ''] && lead.status !== 'submitted' && <span className="material-icons-outlined">send</span>}
                         </button>
                         <p className="text-center text-xs text-primary/60 font-semibold">By submitting, our manager will reach out for a final walkthrough.</p>
                     </div>
                 </div>
+            </div>
+            ))}
             </div>
 
             <div className="mt-16 border-t border-primary/20 pt-8 relative z-10">

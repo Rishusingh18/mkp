@@ -54,8 +54,8 @@ export const leadService = {
         return data;
     },
 
-    async getUserLeads(userId: string, userPhone?: string) {
-        console.log("Supabase call: getUserLeads for", userId, userPhone);
+    async getUserLeads(userId: string, userPhone?: string, userName?: string) {
+        console.log("Supabase call: getUserLeads for", userId, userPhone, userName);
         
         let query = supabase.from('leads').select('*');
         
@@ -72,7 +72,9 @@ export const leadService = {
             const variant3 = `91${basePhone}`; // e.g., 919310138154
 
             // Include leads matching the user_id OR any of the phone variants
-            query = query.or(`user_id.eq.${userId},customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}`);
+            query = query.or(`user_id.eq.${userId},customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}${userName ? `,customer_name.eq."${userName}"` : ''}`);
+        } else if (userName) {
+            query = query.or(`user_id.eq.${userId},customer_name.eq."${userName}"`);
         } else {
             query = query.eq('user_id', userId);
         }
