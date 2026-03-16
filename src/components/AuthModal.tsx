@@ -29,12 +29,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
                 setError(null);
                 setLoading(false);
             }, 300);
-        } else if (initialData) {
-            if (initialData.full_name) setFullName(initialData.full_name);
-            if (initialData.email) setEmail(initialData.email);
-            if (initialData.phone) setPhone(initialData.phone.replace('+91', ''));
+        } else {
+            if (initialData?.full_name) setFullName(initialData.full_name);
+            if (initialData?.email) setEmail(initialData.email);
+            if (initialData?.phone) setPhone(initialData.phone.replace('+91', ''));
         }
-    }, [isOpen, initialData]);
+    }, [isOpen]);
 
     const handleProceed = async (e: React.FormEvent) => {
         e.preventDefault();

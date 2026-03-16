@@ -233,8 +233,20 @@ export default function Summary() {
                                     </div>
                                 </div>
                                 <div className="mt-6 flex gap-3">
-                                    <button className="flex-1 bg-secondary text-primary hover:bg-secondary/90 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer">Message</button>
-                                    <button className="flex-1 bg-secondary text-primary hover:bg-secondary/90 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer">Schedule Call</button>
+                                    <a 
+                                        href="https://wa.me/918787052894?text=Hello%20MKP%20Packers%20&%20Movers,%20I%20would%20like%20to%20inquire%20about%20my%20relocation%20request." 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="flex-1 bg-secondary text-primary hover:bg-secondary/90 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer text-center flex items-center justify-center"
+                                    >
+                                        Message
+                                    </a>
+                                    <a 
+                                        href="tel:+918787052894"
+                                        className="flex-1 bg-secondary text-primary hover:bg-secondary/90 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer text-center flex items-center justify-center"
+                                    >
+                                        Call
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -258,7 +270,7 @@ export default function Summary() {
                         </ul>
                     </div>
 
-                    <div className="sticky bottom-6 space-y-4">
+                    <div className="space-y-4 mt-4 relative z-10">
                         {!user && (
                             <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl flex items-start gap-3">
                                 <span className="material-icons-outlined text-blue-500 text-xl mt-0.5">info</span>

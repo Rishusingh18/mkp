@@ -78,8 +78,10 @@ export default function Home() {
       return;
     }
 
-    // If no user and no guestData provided, open the modal
-    if (!user && !guestData) {
+    const userPhone = profile?.phone || user?.phone;
+
+    // If user lacks a phone number, or no user and no guestData provided, open the modal
+    if ((!user || !userPhone) && !guestData) {
       setIsAuthModalOpen(true);
       return;
     }
@@ -117,9 +119,9 @@ export default function Home() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         initialData={{
-           full_name: profile?.full_name || user?.user_metadata?.full_name,
-           phone: profile?.phone || user?.phone,
-           email: user?.email
+           full_name: profile?.full_name || user?.user_metadata?.full_name || user?.user_metadata?.name || "",
+           phone: profile?.phone || user?.phone || "",
+           email: user?.email || ""
         }}
         onSuccess={(u) => {
           setIsAuthModalOpen(false);
