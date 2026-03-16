@@ -18,7 +18,8 @@ import {
     Save,
     MapPin,
     Phone,
-    Mail
+    Mail,
+    ArrowLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -179,6 +180,15 @@ export default function UserDashboard() {
                         </button>
                     </div>
                 )}
+
+                {/* Back Button */}
+                <button 
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-secondary/60 hover:text-secondary mb-4 transition-colors w-fit group"
+                >
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span className="font-bold">Back</span>
+                </button>
 
                 {/* 1. Profile Header */}
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 pb-10 border-b border-secondary/10">
