@@ -93,14 +93,53 @@ export default function UserDashboard() {
 
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const cleanName = editName.trim();
+        const cleanPhone = editPhone.replace(/\D/g, '');
+        const cleanAddress = editAddress.trim();
+
+        if (cleanName) {
+            const nameRegex = /^[a-zA-Z\s\.]{2,50}$/;
+            if (!nameRegex.test(cleanName)) {
+                toast.error("Please enter a valid name (letters only, min 2 characters).");
+                return;
+            }
+        }
+
+        if (cleanPhone) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            if (!phoneRegex.test(cleanPhone)) {
+                toast.error("Please enter a valid 10-digit Indian mobile number.");
+                return;
+            }
+        }
+
+        if (cleanAddress) {
+            if (cleanAddress.length > 250) {
+                toast.error("Address is too long. Please keep it under 250 characters.");
+                return;
+            }
+            if (/[<>{}]/.test(cleanAddress)) {
+                toast.error("Special characters < , > , { , } are not allowed in the address.");
+                return;
+            }
+            if (/(ignore all previous|system prompt|bypass|DROP TABLE|script)/i.test(cleanAddress)) {
+                toast.error("Address contains flagged or invalid keywords.");
+                return;
+            }
+        }
+
         setSavingProfile(true);
         try {
-            if (!user) return;
+            if (!user) {
+                setSavingProfile(false);
+                return;
+            }
             
             const updates = {
-                full_name: editName,
-                phone: editPhone,
-                address: editAddress,
+                full_name: cleanName,
+                phone: cleanPhone,
+                address: cleanAddress,
             };
 
             const updatedProfile = await leadService.updateProfile(user.id, updates);

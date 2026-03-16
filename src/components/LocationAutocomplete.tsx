@@ -189,6 +189,7 @@ export default function LocationAutocomplete({
                     onKeyDown={handleKeyDown}
                     onFocus={() => value.trim().length > 1 && suggestions.length > 0 && setIsOpen(true)}
                     autoComplete="off"
+                    maxLength={100}
                     className="block w-full pl-10 pr-10 py-3.5 text-sm border-secondary/10 rounded-xl bg-primary/30 text-secondary placeholder-secondary/30 focus:ring-1 focus:ring-secondary/30 focus:border-secondary/30 transition-all outline-none shadow-inner group-hover:bg-primary/40"
                     placeholder={placeholder}
                 />

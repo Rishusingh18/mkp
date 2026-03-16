@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Phone, Loader2, CheckCircle2, User, Mail } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -41,10 +42,36 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
         setLoading(true);
         setError(null);
 
+        const cleanName = fullName.trim();
+        const cleanPhone = phone.replace(/\D/g, '');
+        const cleanEmail = email.trim();
+
+        const nameRegex = /^[a-zA-Z\s\.]{2,50}$/;
+        if (!nameRegex.test(cleanName)) {
+            const msg = "Please enter a valid name (letters only, min 2 characters).";
+            setError(msg);
+            toast.error(msg);
+            setLoading(false);
+            return;
+        }
+
+        if (cleanEmail) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(cleanEmail)) {
+                const msg = "Please enter a valid email address.";
+                setError(msg);
+                toast.error(msg);
+                setLoading(false);
+                return;
+            }
+        }
+
         // Validation for Indian mobile number (10 digits)
         const phoneRegex = /^[6-9]\d{9}$/;
-        if (!phoneRegex.test(phone)) {
-            setError("Please enter a valid 10-digit mobile number.");
+        if (!phoneRegex.test(cleanPhone)) {
+            const msg = "Please enter a valid 10-digit Indian mobile number.";
+            setError(msg);
+            toast.error(msg);
             setLoading(false);
             return;
         }
