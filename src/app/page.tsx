@@ -40,6 +40,7 @@ export default function Home() {
   const [shiftType, setShiftType] = useState<"local" | "intercity">("local");
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -98,10 +99,12 @@ export default function Home() {
         customer_phone: leadPhone,
         pickup_city: source,
         destination_city: destination,
-        moving_date: format(selectedDate, "yyyy-MM-dd"),
+        moving_date: selectedDate.toISOString(),
         shift_type: shiftType,
-        total_estimate: 0,
-      });
+        honeypot: guestData?.honeypot || honeypot
+      } as any);
+
+      toast.success("Quote requested successfully! Our team will contact you shortly.");
 
       localStorage.setItem("current_lead_id", lead.id);
       router.push("/inventory");
@@ -169,6 +172,15 @@ export default function Home() {
         <div className="w-full md:w-1/2 lg:w-5/12 ml-auto">
           <div className="bg-primary rounded-xl shadow-2xl p-6 md:p-8 border border-secondary/20">
             <h2 className="font-display text-2xl text-secondary mb-6 text-center">Initiate Relocation</h2>
+
+            <input 
+              type="text"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              style={{ display: 'none' }}
+              tabIndex={-1}
+              autoComplete="off"
+            />
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <label className="cursor-pointer group relative">

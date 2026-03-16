@@ -9,6 +9,7 @@ export default function ContactPage() {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [query, setQuery] = useState('');
+    const [honeypot, setHoneypot] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -55,16 +56,45 @@ export default function ContactPage() {
             return;
         }
 
+        // 1. Honeypot check (Client-side trap)
+        if (honeypot) {
+            // Bot detected. Pretend it worked to confuse them.
+            toast.success("Query submitted successfully! We will get back to you soon.");
+            setName('');
+            setPhone('');
+            setQuery('');
+            setHoneypot('');
+            return;
+        }
+
+        // 2. Local Cooldown check (60 seconds)
+        const lastSubmit = localStorage.getItem('last_contact_submit');
+        if (lastSubmit && Date.now() - parseInt(lastSubmit) < 60000) {
+            toast.error("Please wait a minute before sending another message to prevent spam.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
-            const { error } = await supabase
-                .from('contact_queries')
-                .insert([
-                    { name: cleanName, phone: cleanPhone, query: cleanQuery }
-                ]);
+            // Send to secure API route instead of direct Supabase insert
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: cleanName, phone: cleanPhone, query: cleanQuery, honeypot })
+            });
 
-            if (error) throw error;
+            if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error("You are sending too many requests. Please slow down.");
+                }
+                throw new Error("Failed to submit query.");
+            }
+
+            // Mark successful submission time in LocalStorage
+            localStorage.setItem('last_contact_submit', Date.now().toString());
 
             toast.success("Query submitted successfully! We will get back to you soon.");
             setName('');
@@ -72,7 +102,7 @@ export default function ContactPage() {
             setQuery('');
         } catch (error: any) {
             console.error("Error submitting query:", error);
-            toast.error("Failed to submit query. Please try again or contact us directly via WhatsApp.");
+            toast.error(error.message || "Failed to submit query. Please try again or contact us directly via WhatsApp.");
         } finally {
             setIsSubmitting(false);
         }
@@ -131,7 +161,7 @@ export default function ContactPage() {
                             <div>
                                 <h3 className="text-primary font-bold mb-1 whitespace-nowrap">Email Support</h3>
                                 <div className="text-primary/70 text-sm leading-relaxed break-all inline-block">
-                                    <a href="mailto:support@mkpglobalmobility.com" className="hover:text-primary transition-colors block">support@mkpglobalmobility.com</a>
+                                    <a href="mailto:mkppackersmovers@gmail.com" className="hover:text-primary transition-colors block">mkppackersmovers@gmail.com</a>
                                 </div>
                             </div>
                         </div>
@@ -180,6 +210,17 @@ export default function ContactPage() {
 
                     <div className="w-full">
                         <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+                            {/* Honeypot Field (Invisible to users, caught by bots) */}
+                            <input 
+                                type="text" 
+                                name="website_url" 
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                                style={{ display: 'none' }}
+                                tabIndex={-1} 
+                                autoComplete="off" 
+                            />
+                            
                             {/* Full Name */}
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-primary ml-2 uppercase tracking-wide">Your Name <span className="text-red-500">*</span></label>

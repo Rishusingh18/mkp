@@ -18,6 +18,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
+    const [honeypot, setHoneypot] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -83,7 +84,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
                 id: null, // Lead will be created with null user_id
                 full_name: fullName,
                 email: email,
-                phone: `+91${phone}`
+                phone: `+91${phone}`,
+                honeypot: honeypot
             };
 
             if (onSuccess) onSuccess(userData);
@@ -136,6 +138,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
                         </div>
 
                         <form onSubmit={handleProceed} className="space-y-4">
+                            <input 
+                                type="text"
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                                style={{ display: 'none' }}
+                                tabIndex={-1}
+                                autoComplete="off"
+                            />
                             <div className="space-y-4">
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">

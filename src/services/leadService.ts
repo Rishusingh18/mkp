@@ -23,19 +23,34 @@ export interface ProfileData {
 }
 
 export const leadService = {
-    async createLead(lead: LeadData) {
-        console.log("Supabase call: createLead", lead);
-        const { data, error } = await supabase
-            .from('leads')
-            .insert([lead])
-            .select()
-            .single();
-
-        if (error) {
-            console.error("Supabase error in createLead:", error);
-            throw error;
+    async createLead(lead: LeadData & { honeypot?: string }) {
+        if (typeof window !== 'undefined') {
+            const lastSubmit = localStorage.getItem('last_lead_submit');
+            if (lastSubmit && Date.now() - parseInt(lastSubmit) < 60000) {
+                throw new Error("Please wait a minute before requesting another quote to prevent spam.");
+            }
         }
-        return data;
+
+        console.log("API call: createLead", lead);
+        const response = await fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(lead)
+        });
+
+        if (!response.ok) {
+            if (response.status === 429) {
+                throw new Error("You are sending too many requests. Please try again later.");
+            }
+            throw new Error("Failed to create lead via secure API");
+        }
+
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('last_lead_submit', Date.now().toString());
+        }
+
+        const data = await response.json();
+        return data.lead;
     },
 
     async updateLead(id: string, updates: Partial<LeadData>) {
