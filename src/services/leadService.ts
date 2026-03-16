@@ -54,8 +54,8 @@ export const leadService = {
         return data;
     },
 
-    async getUserLeads(userId: string, userPhone?: string, userName?: string) {
-        console.log("Supabase call: getUserLeads for", userId, userPhone, userName);
+    async getUserLeads(userId: string, userPhone?: string) {
+        console.log("Supabase call: getUserLeads for", userId, userPhone);
         
         let query = supabase.from('leads').select('*');
         
@@ -72,9 +72,7 @@ export const leadService = {
             const variant3 = `91${basePhone}`; // e.g., 919310138154
 
             // Include leads matching the user_id OR any of the phone variants
-            query = query.or(`user_id.eq.${userId},customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}${userName ? `,customer_name.eq."${userName}"` : ''}`);
-        } else if (userName) {
-            query = query.or(`user_id.eq.${userId},customer_name.eq."${userName}"`);
+            query = query.or(`user_id.eq.${userId},customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}`);
         } else {
             query = query.eq('user_id', userId);
         }
@@ -157,5 +155,37 @@ export const leadService = {
         }
 
         return data as ProfileData;
+    },
+
+    async syncUserLeads(userId: string, userPhone?: string, userName?: string) {
+        if (!userId) return;
+
+        const updates: Partial<LeadData> = { user_id: userId };
+        if (userName) updates.customer_name = userName;
+        if (userPhone && userPhone.trim() !== '') updates.customer_phone = userPhone;
+
+        let queryStr = `user_id.eq.${userId}`;
+        if (userPhone && userPhone.trim() !== '') {
+            const cleanPhone = userPhone.replace(/[\s-]/g, '');
+            let basePhone = cleanPhone;
+            if (cleanPhone.startsWith('+91')) basePhone = cleanPhone.substring(3);
+            else if (cleanPhone.startsWith('91') && cleanPhone.length === 12) basePhone = cleanPhone.substring(2);
+            
+            const variant1 = basePhone; 
+            const variant2 = `+91${basePhone}`; 
+            const variant3 = `91${basePhone}`; 
+            
+            queryStr += `,customer_phone.eq.${variant1},customer_phone.eq.${variant2},customer_phone.eq.${variant3}`;
+        }
+
+        console.log("Supabase call: syncUserLeads", userId, updates, queryStr);
+        const { error } = await supabase
+            .from('leads')
+            .update(updates)
+            .or(queryStr);
+
+        if (error) {
+            console.error("Supabase error in syncUserLeads:", error);
+        }
     }
 };

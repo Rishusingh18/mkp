@@ -28,7 +28,8 @@ export default function Summary() {
                     const userProfile = await leadService.getProfile(currentUser.id);
                     const phone = userProfile?.phone || currentUser.phone || "";
                     const userNameToSearch = userProfile?.full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || "";
-                    const userLeads = await leadService.getUserLeads(currentUser.id, phone, userNameToSearch);
+                    await leadService.syncUserLeads(currentUser.id, phone, userNameToSearch);
+                    const userLeads = await leadService.getUserLeads(currentUser.id, phone);
                     fetchedLeads = userLeads?.filter(l => l.status !== 'completed' && l.status !== 'cancelled') || [];
                 }
 

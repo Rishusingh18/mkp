@@ -14,18 +14,15 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: AuthModalProps) {
     const [step, setStep] = useState<"phone" | "otp" | "success">("phone");
-    const [authMode, setAuthMode] = useState<"login" | "register">("login");
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Reset state when modal closes
     useEffect(() => {
         if (!isOpen) {
             setTimeout(() => {
-                setAuthMode("login");
                 setFullName("");
                 setEmail("");
                 setPhone("");
@@ -107,78 +104,59 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialData }: A
                             <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/10">
                                 <Phone className="text-primary w-8 h-8" />
                             </div>
-                            <h3 className="text-2xl font-serif font-bold text-primary">{authMode === "login" ? "Get Moving" : "Create Account"}</h3>
-                            <p className="text-primary/60 text-sm mt-2">{authMode === "login" ? "Enter your number to get a personalized estimate." : "Enter your details to initiate your relocation."}</p>
+                            <h3 className="text-2xl font-serif font-bold text-primary">Get Moving Estimate</h3>
+                            <p className="text-primary/60 text-sm mt-2">Enter your details to initiate your relocation.</p>
                         </div>
 
                         <form onSubmit={handleProceed} className="space-y-4">
-                            <AnimatePresence mode="wait">
-                                {authMode === "register" && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="space-y-4 overflow-hidden"
-                                    >
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">
-                                                <User size={18} />
-                                            </span>
-                                            <input
-                                                type="text"
-                                                placeholder="Full Name"
-                                                value={fullName}
-                                                onChange={(e) => setFullName(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
-                                                required={authMode === "register"}
-                                            />
-                                        </div>
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">
-                                                <Mail size={18} />
-                                            </span>
-                                            <input
-                                                type="email"
-                                                placeholder="Email Address"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
-                                                required={authMode === "register"}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 font-bold">+91</span>
-                                <input
-                                    type="tel"
-                                    placeholder="00000 00000"
-                                    maxLength={10}
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                                    className="w-full pl-14 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
-                                    required
-                                />
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">
+                                        <User size={18} />
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        className="w-full pl-12 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                                        required
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40">
+                                        <Mail size={18} />
+                                    </span>
+                                    <input
+                                        type="email"
+                                        placeholder="Email Address (Optional)"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full pl-12 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40 font-bold">+91</span>
+                                    <input
+                                        type="tel"
+                                        placeholder="00000 00000"
+                                        maxLength={10}
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                                        className="w-full pl-14 pr-4 py-4 bg-primary/5 border border-primary/10 rounded-2xl text-primary placeholder-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                                        required
+                                    />
+                                </div>
                             </div>
 
                             {error && <p className="text-red-500 text-xs text-center font-medium">{error}</p>}
 
                             <button
                                 type="submit"
-                                disabled={loading || phone.length < 10 || (authMode === "register" && (!fullName || !email))}
+                                disabled={loading || phone.length < 10 || !fullName.trim()}
                                 className="w-full py-4 bg-primary text-secondary rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Get Estimate"}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}
-                                className="w-full text-xs text-primary/60 hover:text-primary font-bold transition-colors mt-2"
-                            >
-                                {authMode === "login" ? "New user? Create an account" : "Already have an account? Sign in"}
                             </button>
                         </form>
                     </div>
