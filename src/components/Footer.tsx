@@ -9,7 +9,10 @@ export default function Footer() {
                         <div className="h-8 w-8 bg-secondary rounded flex items-center justify-center text-primary font-serif font-bold text-lg">M</div>
                         <div className="text-sm">
                             <span className="block font-bold text-secondary">MKP Packers & Movers</span>
-                            <span className="text-xs uppercase tracking-tighter text-background-light/40">© {new Date().getFullYear()} All rights reserved.</span>
+                            <span className="block text-xs text-background-light/60 mt-1 max-w-[280px]">
+                                Infront of Hotel Prime Land, Beside Star Public School, Bhullanpur, Varanasi 221108
+                            </span>
+                            <span className="text-xs uppercase tracking-tighter text-background-light/40 mt-1 block">© {new Date().getFullYear()} All rights reserved.</span>
                         </div>
                     </Link>
                     <div className="flex flex-col items-end gap-6">

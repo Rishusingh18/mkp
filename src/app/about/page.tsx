@@ -122,21 +122,38 @@ export default function AboutPage() {
                         </div>
                     </motion.div>
 
-                    {/* Visual Offset Grid */}
+                    {/* Visual Offset Grid & Image Collage Section */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="relative hidden lg:block h-full min-h-[500px] group cursor-pointer"
+                        className="relative hidden lg:block h-full min-h-[600px] xl:min-h-[650px] group cursor-pointer"
                     >
-                        <div className="absolute inset-0 bg-primary/5 rounded-[3rem] -rotate-3 border border-primary/10 transition-all duration-500 group-hover:-rotate-6 group-hover:scale-105 group-hover:translate-x-4 group-hover:bg-primary/10"></div>
-                        <div className="absolute inset-0 bg-primary text-background-light p-12 rounded-[3rem] shadow-2xl flex flex-col justify-center transition-all duration-500 group-hover:-translate-y-4 group-hover:translate-x-2 group-hover:shadow-3xl group-hover:rotate-1">
-                            <ShieldCheck size={64} className="text-secondary mb-8 group-hover:scale-110 transition-transform duration-500" />
-                            <h3 className="text-3xl font-display font-bold mb-4">Uncompromised Quality</h3>
-                            <p className="text-background-light/70 text-lg leading-relaxed">
-                                We deal in shifting goods with absolute precision. We employ the trade's best men, trained to pack your household items flawlessly. Our lorry drivers are highly experienced, ensuring they navigate roads perfectly to avoid bumps and deliver your items in pristine condition.
-                            </p>
+                        <div className="absolute inset-0 bg-primary/5 rounded-[3rem] -rotate-3 border border-primary/10 transition-all duration-500 group-hover:-rotate-4 group-hover:scale-[1.02] group-hover:translate-x-2 group-hover:bg-primary/10"></div>
+                        <div className="absolute inset-0 bg-primary text-background-light p-10 xl:p-12 rounded-[3rem] shadow-2xl flex flex-col justify-start overflow-hidden transition-all duration-500 group-hover:-translate-y-3 group-hover:shadow-3xl group-hover:rotate-1">
+                            <div className="relative z-10 shrink-0">
+                                <ShieldCheck size={48} className="text-secondary mb-6 group-hover:scale-110 transition-transform duration-500" />
+                                <h3 className="text-3xl xl:text-4xl font-display font-bold mb-4 tracking-tight">Uncompromised Quality</h3>
+                                <p className="text-background-light/70 text-sm xl:text-base leading-relaxed">
+                                    We deal in shifting goods with absolute precision. We employ the trade's best men, trained to pack your household items flawlessly. Our lorry drivers are highly experienced, ensuring they navigate roads perfectly to avoid bumps and deliver your items in pristine condition.
+                                </p>
+                            </div>
+                            
+                            {/* Expandable Image Region */}
+                            <div className="mt-8 flex-grow relative rounded-2xl overflow-hidden border border-secondary/10 group-hover:border-secondary/30 transition-colors shadow-inner w-full min-h-[200px]">
+                                {/* Current main banner, stretches to fill available space */}
+                                <img 
+                                    src="/mkp-banner.png" 
+                                    alt="MKP Relocation Quality Transport" 
+                                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                                />
+                                {/* Overlay gradient to keep edge contrast */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className="absolute bottom-4 right-4 bg-secondary/90 backdrop-blur-sm text-primary text-[10px] uppercase tracking-widest px-4 py-2 rounded-full font-bold border border-secondary/50 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 shadow-xl">
+                                    View Gallery
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
                 </div>

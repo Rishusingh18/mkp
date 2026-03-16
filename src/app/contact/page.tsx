@@ -13,9 +13,45 @@ export default function ContactPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if (!name || !phone || !query) {
+        const cleanName = name.trim();
+        const cleanPhone = phone.replace(/\D/g, '');
+        const cleanQuery = query.trim();
+
+        if (!cleanName || !cleanPhone || !cleanQuery) {
             toast.error("Please fill out all required fields.");
+            return;
+        }
+
+        const nameRegex = /^[a-zA-Z\s\.]{2,50}$/;
+        if (!nameRegex.test(cleanName)) {
+            toast.error("Please enter a valid name (letters only, min 2 characters).");
+            return;
+        }
+
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(cleanPhone)) {
+            toast.error("Please enter a valid 10-digit Indian phone number.");
+            return;
+        }
+
+        if (cleanQuery.length < 10) {
+            toast.error("Query is too short. Please provide at least 10 characters of detail.");
+            return;
+        }
+
+        if (cleanQuery.length > 1000) {
+            toast.error("Query is too long. Please keep it under 1000 characters.");
+            return;
+        }
+
+        // Basic Anti-Injection / XSS / Spam heuristics
+        if (/[<>{}]/.test(cleanQuery)) {
+            toast.error("Special characters < , > , { , } are not allowed in the query.");
+            return;
+        }
+
+        if (/(ignore all previous|system prompt|bypass|DROP TABLE|script)/i.test(cleanQuery)) {
+            toast.error("Your query contains flagged or invalid keywords. Please rephrase.");
             return;
         }
 
@@ -25,7 +61,7 @@ export default function ContactPage() {
             const { error } = await supabase
                 .from('contact_queries')
                 .insert([
-                    { name, phone, query }
+                    { name: cleanName, phone: cleanPhone, query: cleanQuery }
                 ]);
 
             if (error) throw error;
@@ -60,8 +96,9 @@ export default function ContactPage() {
                             <div>
                                 <h3 className="text-primary font-bold mb-1 whitespace-nowrap">Our Address</h3>
                                 <div className="text-primary/70 text-sm leading-relaxed inline-block">
-                                    MKP Packers & Movers<br />
-                                    Corporate Headquarters
+                                    Infront of Hotel Prime Land,<br />
+                                    Beside Star Public School,<br />
+                                    Bhullanpur, Varanasi 221108
                                 </div>
                             </div>
                         </div>
