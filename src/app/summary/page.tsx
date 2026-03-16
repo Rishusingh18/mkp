@@ -328,7 +328,12 @@ export default function Summary() {
             <div className="fixed bottom-0 left-0 w-full h-32 pointer-events-none opacity-20 z-0 overflow-hidden">
                 <div className="absolute bottom-10 w-full border-b-2 border-dashed border-primary/20"></div>
                 <div className="animate-drive absolute bottom-4 text-primary">
-                    <span className="material-icons-outlined text-6xl -scale-x-100 inline-block">local_shipping</span>
+                    <span 
+                        className="material-icons-outlined text-6xl inline-block" 
+                        style={{ transform: "scaleX(-1)" }}
+                    >
+                        local_shipping
+                    </span>
                 </div>
             </div>
         </main>
