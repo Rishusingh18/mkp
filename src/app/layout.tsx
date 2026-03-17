@@ -20,7 +20,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mkppackersmover.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mkppackersmovers.com'),
   title: {
     default: "MKP Packers & Movers | Professional Relocation Services",
     template: "%s | MKP Packers & Movers"
