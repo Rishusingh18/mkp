@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MKP Packers & Movers | Professional Relocation Services",
     description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
-    creator: "@mkppackers",
+    creator: "@mkppackersmovers",
     images: ["/logo.png"],
   },
   robots: {
