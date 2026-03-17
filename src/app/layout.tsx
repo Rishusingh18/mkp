@@ -20,8 +20,49 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "MKP Packers & Movers",
-  description: "Corporate Relocation Services",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mkppackers.com'),
+  title: {
+    default: "MKP Packers & Movers | Professional Relocation Services",
+    template: "%s | MKP Packers & Movers"
+  },
+  description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
+  keywords: ["packers and movers", "relocation services", "movers and packers", "corporate relocation", "residential moving", "MKP packers"],
+  authors: [{ name: "MKP Packers & Movers" }],
+  creator: "MKP Packers & Movers",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "MKP Packers & Movers",
+    title: "MKP Packers & Movers | Professional Relocation Services",
+    description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: "MKP Packers & Movers Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MKP Packers & Movers | Professional Relocation Services",
+    description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
+    creator: "@mkppackers",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
