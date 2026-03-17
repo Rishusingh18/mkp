@@ -6,13 +6,19 @@ export function middleware(request: NextRequest) {
   const host = request.headers.get('host') || '';
 
   // Redirect HTTP to HTTPS, except for local development
-  if (proto === 'http' && !host.includes('localhost') && !host.includes('127.0.0.1')) {
-    const url = request.nextUrl.clone();
-    url.protocol = 'https:';
-    url.port = '';
-    
-    // 301 Permanent Redirect to help Google properly index ONLY HTTPS versions
-    return NextResponse.redirect(url, 301);
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+  
+  if (!isLocalhost && (proto === 'http' || !host.startsWith('www.'))) {
+    // Only redirect if it's the main domain (don't redirect vercel subdomains)
+    if (host.includes('mkppackersmovers.com')) {
+      const url = request.nextUrl.clone();
+      url.protocol = 'https:';
+      url.host = 'www.mkppackersmovers.com';
+      url.port = '';
+      
+      // 301 Permanent Redirect to help Google properly index ONLY HTTPS www version
+      return NextResponse.redirect(url, 301);
+    }
   }
 
   return NextResponse.next();
