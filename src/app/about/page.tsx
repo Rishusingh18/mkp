@@ -145,7 +145,7 @@ export default function AboutPage() {
                             <Link href="/#gallery" className="mt-8 flex-grow relative rounded-2xl overflow-hidden border border-secondary/10 group-hover:border-secondary/30 transition-colors shadow-inner w-full min-h-[200px] block cursor-pointer">
                                 {/* Current main banner, stretches to fill available space */}
                                 <img 
-                                    src="/mkp-packers-movers-banner.webp" 
+                                    src="/mkp-uncompromised-quality-transport.webp" 
                                     alt="MKP Relocation Quality Transport" 
                                     width={800}
                                     height={600}
