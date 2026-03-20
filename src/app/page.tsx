@@ -321,6 +321,41 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Uncompromised Quality Section */}
+      <section className="bg-background-light py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex justify-center">
+        <div className="bg-primary rounded-[2rem] overflow-hidden relative shadow-2xl flex flex-col md:flex-row w-full max-w-5xl">
+          {/* Text Content */}
+          <div className="p-8 md:p-14 lg:p-16 w-full md:w-1/2 flex flex-col justify-center relative z-10 order-2 md:order-1">
+            <div className="w-14 h-14 rounded-full border-2 border-secondary/30 flex items-center justify-center mb-8">
+              <span className="material-icons text-secondary text-3xl">verified_user</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl text-secondary font-bold tracking-wider mb-6 leading-tight">
+              UNCOMPROMISED<br/>QUALITY
+            </h2>
+            <p className="text-secondary/80 leading-relaxed text-sm md:text-base font-medium">
+              We deal in shifting goods with absolute precision. We employ the trade's best men, trained to pack your household items flawlessly. Our lorry drivers are highly experienced, ensuring they navigate roads perfectly to avoid bumps and deliver your items in pristine condition.
+            </p>
+          </div>
+          
+          {/* Image Content */}
+          <div className="w-full md:w-1/2 relative min-h-[400px] md:min-h-full order-1 md:order-2 overflow-hidden">
+            <img 
+              src="/uncompromised-quality.png" 
+              alt="Uncompromised Quality Transport" 
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* The blue geometric shape overlay */}
+            <div 
+              className="absolute bottom-0 right-0 w-[150%] h-[150%] bg-primary z-20 flex items-center justify-center origin-bottom-right" 
+              style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', transform: 'translateX(20%) translateY(20%)' }}
+            >
+              <span className="font-display text-[6rem] md:text-[8rem] font-black text-white/90 transform -translate-x-12 translate-y-12">MKP</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-background-light py-20 border-t border-primary/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-center font-display text-4xl text-primary mb-16 font-bold">How MKP Packers and Movers Works?</h2>
