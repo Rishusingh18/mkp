@@ -452,8 +452,7 @@ export default function Home() {
                 loop 
                 playsInline 
                 poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-1.mp4" type="video/mp4" />
               </video>
@@ -470,8 +469,7 @@ export default function Home() {
                 loop 
                 playsInline 
                 poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-2.mp4" type="video/mp4" />
               </video>
@@ -488,8 +486,7 @@ export default function Home() {
                 loop 
                 playsInline 
                 poster="/gallery/mkp-packers-movers-recent-move-3.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-3.mp4" type="video/mp4" />
               </video>
@@ -506,8 +503,7 @@ export default function Home() {
                 loop 
                 playsInline 
                 poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-4.mp4" type="video/mp4" />
               </video>
@@ -524,8 +520,7 @@ export default function Home() {
                 loop 
                 playsInline 
                 poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-5.mp4" type="video/mp4" />
               </video>
