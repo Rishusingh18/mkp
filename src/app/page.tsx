@@ -404,7 +404,7 @@ export default function Home() {
       </section>
 
       {/* Gallery Section */}
-      <section className="bg-white py-20 border-t border-primary/5">
+      <section id="gallery" className="bg-white py-20 border-t border-primary/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-4xl text-primary font-bold mb-4">Our Recent Moves</h2>
@@ -451,7 +451,7 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
+                poster="/gallery/video-poster.webp" 
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-1.mp4" type="video/mp4" />
@@ -468,7 +468,7 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
+                poster="/gallery/video-poster.webp" 
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-2.mp4" type="video/mp4" />
@@ -485,7 +485,7 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-3.webp" 
+                poster="/gallery/video-poster.webp" 
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-3.mp4" type="video/mp4" />
@@ -502,7 +502,7 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
+                poster="/gallery/video-poster.webp" 
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-4.mp4" type="video/mp4" />
@@ -519,7 +519,7 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
+                poster="/gallery/video-poster.webp" 
                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-5.mp4" type="video/mp4" />
@@ -536,9 +536,8 @@ export default function Home() {
                 muted 
                 loop 
                 playsInline 
-                poster="/gallery/mkp-packers-movers-recent-move-3.webp" 
-                preload="none"
-                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                poster="/gallery/video-poster.webp" 
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300"
               >
                 <source src="/gallery/videos/mkp-packers-movers-recent-move-video-6.mp4" type="video/mp4" />
               </video>

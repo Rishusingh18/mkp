@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import {
     CheckCircle2,
     Star,
@@ -141,7 +142,7 @@ export default function AboutPage() {
                             </div>
                             
                             {/* Expandable Image Region */}
-                            <div className="mt-8 flex-grow relative rounded-2xl overflow-hidden border border-secondary/10 group-hover:border-secondary/30 transition-colors shadow-inner w-full min-h-[200px]">
+                            <Link href="/#gallery" className="mt-8 flex-grow relative rounded-2xl overflow-hidden border border-secondary/10 group-hover:border-secondary/30 transition-colors shadow-inner w-full min-h-[200px] block cursor-pointer">
                                 {/* Current main banner, stretches to fill available space */}
                                 <img 
                                     src="/mkp-packers-movers-banner.webp" 
@@ -156,7 +157,7 @@ export default function AboutPage() {
                                 <div className="absolute bottom-4 right-4 bg-secondary/90 backdrop-blur-sm text-primary text-[10px] uppercase tracking-widest px-4 py-2 rounded-full font-bold border border-secondary/50 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 shadow-xl">
                                     View Gallery
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     </motion.div>
                 </div>
