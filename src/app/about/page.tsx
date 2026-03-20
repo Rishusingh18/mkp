@@ -144,8 +144,11 @@ export default function AboutPage() {
                             <div className="mt-8 flex-grow relative rounded-2xl overflow-hidden border border-secondary/10 group-hover:border-secondary/30 transition-colors shadow-inner w-full min-h-[200px]">
                                 {/* Current main banner, stretches to fill available space */}
                                 <img 
-                                    src="/mkp-banner.png" 
+                                    src="/mkp-packers-movers-banner.webp" 
                                     alt="MKP Relocation Quality Transport" 
+                                    width={800}
+                                    height={600}
+                                    loading="lazy"
                                     className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
                                 />
                                 {/* Overlay gradient to keep edge contrast */}
