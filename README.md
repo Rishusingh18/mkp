@@ -1,5 +1,5 @@
 # MKP Packers & Movers - Website
-![MKP Packers & Movers](public/logo.png)
+![MKP Packers & Movers](public/mkp-packers-movers-logo.webp)
 
 This is the professional corporate and residential relocation services website for **MKP Packers & Movers**. Built with modern web technologies, it provides users with an intuitive interface to get relocation estimates, manage their profiles, and track their moves seamlessly.
 
@@ -20,6 +20,32 @@ This is the professional corporate and residential relocation services website f
 - **Backend & Database**: [Supabase](https://supabase.com/) (Auth, PostgreSQL Database, Edge Functions)
 - **Icons & Components**: [Lucide React](https://lucide.dev/), Material Icons, Sonner (for toast notifications)
 - **Analytics & Deployment**: [Vercel](https://vercel.com/) & Vercel Analytics
+
+## Media Upload Guidelines
+
+To maintain performance and SEO, all media added to this project MUST follow these rules:
+
+1. **Optimize Images (The 100KB Rule)**
+   - Never upload raw images. Aim for under 100KB.
+   - **Convert to WebP**: Always use WebP format.
+   - **Resize to Display Size**: Do not upload images larger than their maximum display container (e.g., 800px or 1200px max width).
+   - **Use aspect-ratio**: Define `width` and `height` explicitly to prevent Cumulative Layout Shift (CLS). Include `loading="lazy"` for non-critical images.
+     ```html
+     <img src="/image-name.webp" alt="Descriptive text" width="800" height="1200" loading="lazy">
+     ```
+
+2. **Handle Small Videos (The "Muted" Secret)**
+   - **Strip Audio**: Use tools like Handbrake to remove empty audio tracks.
+   - **Muted Requirement**: Use the `muted` attribute so modern browsers can autoplay without blocking.
+   - **Attributes**: Include `autoplay muted loop playsinline poster="fallback.jpg" preload="none"`.
+
+3. **SEO Checklist for Media**
+   - **Descriptive Filenames**: Use descriptive, hyphenated filenames (e.g., `mkp-packers-movers-logo.webp` instead of `IMG_123.jpg`).
+   - **Alt Text**: Always include clear, descriptive `alt` text for screen readers and search Engine bots.
+   - **Video Schema**: Use schema.org markup if a video is central to a page.
+
+4. **Performance Validation**
+   - Test images with [Squoosh.app](https://squoosh.app/) and validate pages with [Google PageSpeed Insights](https://pagespeed.web.dev/).
 
 ## Getting Started
 

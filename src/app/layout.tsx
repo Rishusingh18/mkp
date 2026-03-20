@@ -38,10 +38,10 @@ export const metadata: Metadata = {
     description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
     images: [
       {
-        url: "/logo.png",
+        url: "/mkp-packers-movers-logo.webp",
         width: 800,
         height: 600,
-        alt: "MKP Packers & Movers Logo",
+        alt: "MKP Packers & Movers Professional Relocation Services Logo",
       },
     ],
   },
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     title: "MKP Packers & Movers | Professional Relocation Services",
     description: "Top-rated corporate and residential relocation services by MKP Packers & Movers. Get a free quote for local and long-distance moving.",
     creator: "@mkppackersmovers",
-    images: ["/logo.png"],
+    images: ["/mkp-packers-movers-logo.webp"],
   },
   robots: {
     index: true,
@@ -64,8 +64,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/mkp-packers-movers-logo.webp',
+    apple: '/mkp-packers-movers-logo.webp',
   },
 };
 

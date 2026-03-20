@@ -341,8 +341,11 @@ export default function Home() {
           {/* Image Content */}
           <div className="w-full md:w-1/2 relative min-h-[400px] md:min-h-full order-1 md:order-2 overflow-hidden">
             <img 
-              src="/uncompromised-quality.png" 
-              alt="Uncompromised Quality Transport" 
+              src="/mkp-uncompromised-quality-transport.webp" 
+              alt="MKP Packers and Movers truck transporting goods safely for corporate and residential relocation" 
+              width={800}
+              height={1200}
+              loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"
             />
             {/* The blue geometric shape overlay */}
@@ -396,6 +399,160 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section className="bg-white py-20 border-t border-primary/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-4xl text-primary font-bold mb-4">Our Recent Moves</h2>
+            <p className="text-primary/70 text-lg max-w-2xl mx-auto">Glimpses of our precision packing and secure transportation in action.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative">
+              <img 
+                src="/gallery/mkp-packers-movers-recent-move-1.webp" 
+                alt="MKP Packers and Movers safely loading items during a recent move" 
+                width={800}
+                height={600}
+                loading="lazy"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative">
+              <img 
+                src="/gallery/mkp-packers-movers-recent-move-2.webp" 
+                alt="MKP Packers and Movers secure packaging for delicate household goods" 
+                width={800}
+                height={600}
+                loading="lazy"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative">
+              <img 
+                src="/gallery/mkp-packers-movers-recent-move-3.webp" 
+                alt="MKP Movers efficiently unloading goods at the destination" 
+                width={800}
+                height={600}
+                loading="lazy"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+            {/* Video Items */}
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-1.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-2.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-3.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-3.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-1.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-4.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-2.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-5.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border border-primary/10 aspect-[4/3] group relative bg-black">
+              <video 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                poster="/gallery/mkp-packers-movers-recent-move-3.webp" 
+                preload="none"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              >
+                <source src="/gallery/videos/mkp-packers-movers-recent-move-video-6.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/40">
+                  <span className="material-icons text-white">play_arrow</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
