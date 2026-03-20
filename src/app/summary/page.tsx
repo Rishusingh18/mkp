@@ -220,7 +220,9 @@ export default function Summary() {
                                         <p className="text-sm text-secondary/80 font-medium mb-1">Senior Relocation Manager</p>
                                         <p className="text-xs text-secondary/60">MKP Elite Team • 10 Yrs Experience</p>
                                     </div>
-                                    <img alt="LinkedIn" className="w-6 h-6 opacity-60 grayscale hover:grayscale-0 transition-all cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbrSATt6f1KKfhovkW-OzSx1BmApMHkIpGqVHTVfZDm58mW9MH8x8W0l3F-7vwoUSVSj6ZMKA7hFVMfBwNItJRPi3NwFmWw9iVmS5DZ-8X-lpLSpNyRGt1qbwNyDgJCRukMi6j3RbLPEGMW_N2TuarnZiXaarFFiAnzfBm06S6Ayr_yhi4j6fmN-Zlh3SY9bjoBXl3R--z31KskIXv0B-TkjioYitopAN7APdyweXUw1a9R2a7y6O5kiExiUYoNhsBlie4v0mxz2Be" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-secondary opacity-60 hover:opacity-100 transition-all cursor-pointer">
+                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                    </svg>
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-secondary/20 space-y-3">
                                     <div className="flex items-center gap-3 text-sm text-secondary">
