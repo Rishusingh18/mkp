@@ -353,7 +353,7 @@ export default function Home() {
               className="absolute bottom-0 right-0 w-[150%] h-[150%] bg-primary z-20 flex items-center justify-center origin-bottom-right" 
               style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', transform: 'translateX(20%) translateY(20%)' }}
             >
-              <span className="font-display text-[6rem] md:text-[8rem] font-black text-white/90 transform -translate-x-12 translate-y-12">MKP</span>
+              <span className="font-display text-[6rem] md:text-[8rem] font-black text-white/90 translate-x-8 translate-y-24">MKP</span>
             </div>
           </div>
         </div>
