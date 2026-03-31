@@ -21,6 +21,7 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
     return (
         <div className="border border-primary/10 rounded-2xl overflow-hidden bg-primary/5 mb-4 hover:border-primary/20 transition-colors">
             <button
+                suppressHydrationWarning
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none"
             >
@@ -172,7 +173,7 @@ export default function AboutPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { name: "Sushil Kumar Panday", role: "Operations Director", desc: "Directs and controls company operations, providing strategic guidance to ensure MKP achieves its mission and long-term objectives." },
+                            { name: "Manoj Kumar Pandey", role: "Operations Director", desc: "Directs and controls company operations, providing strategic guidance to ensure MKP achieves its mission and long-term objectives." },
                             { name: "Abhinav Panday", role: "Vision & Strategy", desc: "Sets the long-term goals of the organization, managing the overarching strategy and monitoring its successful implementation." },
                             { name: "Sarvesh Dubey", role: "Planning & Resources", desc: "Creates specific plans to meet company goals, allocating employee resources, delegating responsibilities, and setting realistic timelines." }
                         ].map((member, index) => (

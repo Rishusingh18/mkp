@@ -206,24 +206,17 @@ export default function Summary() {
 
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-primary rounded-xl shadow-lg border-t-4 border-secondary overflow-hidden relative group text-secondary">
-                        <div className="h-24 bg-secondary/5 relative overflow-hidden">
-                            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                        </div>
-                        <div className="px-6 relative">
-                            <div className="absolute -top-12 border-4 border-surface-light dark:border-surface-dark rounded-full overflow-hidden w-24 h-24 shadow-md bg-secondary">
-                                <img alt="Sarah Jenkins" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB5CSqHReh4O40Qqvn6Ziq2k4dlybs75LxvnLZyNwq7p7tkheCf-_8YOlGi_ZCHR6-HCxXQF2dn1LAgO2Yt7lxGns4WAmMWEoc63tTYWOCevBI5eZuZLmnYbCvhqk97oT92O5lv-QwprfpL0vvhOZ5UwCVw0G9RzjvrnsOsLUK_QA4hhO6roOG-j1bz22qaCzqyiVC6WAGRjVsqpfadcEYpTLouGumTQKYlCDRKZOZDzDLK2Y639QxzqKOCGv9VGTd9dSRAIhe6XVC" />
-                            </div>
-                            <div className="pt-14 pb-6">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="text-xl font-serif font-bold text-secondary">Manoj Kumar Pandey</h3>
-                                        <p className="text-sm text-secondary/80 font-medium mb-1">Senior Relocation Manager</p>
-                                        <p className="text-xs text-secondary/60">MKP Elite Team • 10 Yrs Experience</p>
-                                    </div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-secondary opacity-60 hover:opacity-100 transition-all cursor-pointer">
-                                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                                    </svg>
+                        <div className="px-6 pt-6 pb-6 relative">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xl font-serif font-bold text-secondary">Manoj Kumar Pandey</h3>
+                                    <p className="text-sm text-secondary/80 font-medium mb-1">Senior Relocation Manager</p>
+                                    <p className="text-xs text-secondary/60">MKP Elite Team • 10 Yrs Experience</p>
                                 </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-secondary opacity-60 hover:opacity-100 transition-all cursor-pointer">
+                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                </svg>
+                            </div>
                                 <div className="mt-4 pt-4 border-t border-secondary/20 space-y-3">
                                     <div className="flex items-center gap-3 text-sm text-secondary">
                                         <span className="material-icons-outlined text-secondary">verified</span>
@@ -252,7 +245,6 @@ export default function Summary() {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <div className="bg-primary rounded-xl p-6 border border-secondary/20 shadow-sm">
                         <h4 className="text-xs font-bold text-secondary uppercase tracking-widest mb-4">Included Protection</h4>

@@ -15,6 +15,7 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
     return (
         <div className="border border-primary/10 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <button
+                suppressHydrationWarning
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
