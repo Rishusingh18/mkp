@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { leadService } from "@/services/leadService";
 import { supabase } from "@/lib/supabase";
 import AuthModal from "@/components/AuthModal";
 import CustomDatePicker from "@/components/CustomDatePicker";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { Calendar as CalendarIcon, ChevronDown, MapPin } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronDown, MapPin, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -323,39 +325,62 @@ export default function Home() {
       </section>
 
       {/* Uncompromised Quality Section */}
-      <section className="bg-background-light py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex justify-center">
-        <div className="bg-primary rounded-[2rem] overflow-hidden relative shadow-2xl flex flex-col md:flex-row w-full max-w-5xl">
-          {/* Text Content */}
-          <div className="p-8 md:p-14 lg:p-16 w-full md:w-1/2 flex flex-col justify-center relative z-10 order-2 md:order-1">
-            <div className="w-14 h-14 rounded-full border-2 border-secondary/30 flex items-center justify-center mb-8">
-              <span className="material-icons text-secondary text-3xl">verified_user</span>
+      {/* Uncompromised Quality Section */}
+      <section className="bg-background-light py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto bg-primary rounded-[2.5rem] p-8 md:p-12 lg:p-20 shadow-2xl flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+          
+          {/* Left Column: Text Content */}
+          <div className="w-full md:w-1/2 flex flex-col justify-center order-2 md:order-1">
+            <div className="w-16 h-16 rounded-full border-2 border-secondary/30 flex items-center justify-center mb-8 relative group cursor-default">
+              <div className="absolute inset-0 bg-secondary/10 rounded-full transition-transform duration-700 group-hover:scale-110"></div>
+              <ShieldCheck size={32} className="text-secondary relative z-10 transition-transform duration-500 group-hover:scale-110" />
             </div>
-            <h2 className="font-display text-3xl md:text-4xl text-secondary font-bold tracking-wider mb-6 leading-tight">
-              UNCOMPROMISED<br/>QUALITY
+            
+            <h2 className="font-display text-4xl md:text-5xl text-background-light font-bold tracking-tight mb-6 leading-tight">
+              Uncompromised<br/>
+              <span className="text-secondary">Quality</span>
             </h2>
-            <p className="text-secondary/80 leading-relaxed text-sm md:text-base font-medium">
+            
+            <p className="text-background-light/80 leading-relaxed text-lg">
               We deal in shifting goods with absolute precision. We employ the trade's best men, trained to pack your household items flawlessly. Our lorry drivers are highly experienced, ensuring they navigate roads perfectly to avoid bumps and deliver your items in pristine condition.
             </p>
           </div>
           
-          {/* Image Content */}
-          <div className="w-full md:w-1/2 relative min-h-[400px] md:min-h-full order-1 md:order-2 overflow-hidden">
-            <img 
-              src="/mkp-uncompromised-quality-transport.webp" 
-              alt="MKP Packers and Movers truck transporting goods safely for corporate and residential relocation" 
-              width={800}
-              height={1200}
-              loading="lazy"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            {/* The blue geometric shape overlay */}
-            <div 
-              className="absolute bottom-0 right-0 w-[150%] h-[150%] bg-primary z-20 flex items-center justify-center origin-bottom-right" 
-              style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)', transform: 'translateX(20%) translateY(20%)' }}
+          {/* Right Column: Rotated Image Card */}
+          <div className="w-full md:w-1/2 order-1 md:order-2 relative min-h-[400px] lg:min-h-[500px] group z-10">
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="absolute inset-0 w-full h-full"
             >
-              <span className="font-display text-[6rem] md:text-[8rem] font-black text-white/90 translate-x-8 translate-y-24">MKP</span>
-            </div>
+              {/* Decorative backdrop rotation layer (lightened to contrast vs blue card) */}
+              <div className="absolute inset-0 bg-background-light/5 rounded-[3rem] -rotate-3 border border-background-light/10 transition-all duration-700 group-hover:-rotate-6 group-hover:scale-[1.02] group-hover:-translate-x-3 shadow-xl"></div>
+              
+              {/* Main Image Card foreground layer */}
+              <Link href="/gallery" className="absolute inset-0 bg-primary-dark rounded-[3rem] shadow-2xl overflow-hidden transition-all duration-700 group-hover:-translate-y-4 group-hover:shadow-3xl group-hover:rotate-1 border border-background-light/20 block cursor-pointer">
+                {/* Image Container, explicitly set to push image down using our object-cover/object-top strategy */}
+                <div className="relative w-full h-full pt-10 px-0 pb-0">
+                  <div className="absolute top-6 left-8 flex items-center gap-2 z-20">
+                    <div className="w-3 h-3 rounded-full bg-secondary/80 shadow-sm"></div>
+                    <div className="w-3 h-3 rounded-full bg-secondary/40"></div>
+                    <div className="w-3 h-3 rounded-full bg-secondary/20"></div>
+                  </div>
+                  <img 
+                      src="/mkp-uncompromised-quality-transport.webp" 
+                      alt="MKP Relocation Quality Transport" 
+                      className="absolute top-0 left-0 w-full h-[150%] object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  />
+                  {/* Subtle inner shadow and overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                  
+                  {/* Gallery Badge */}
+                  <div className="absolute bottom-6 right-6 bg-secondary/95 backdrop-blur-md text-primary text-xs uppercase tracking-widest px-5 py-2.5 rounded-full font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 border border-secondary/50 pointer-events-none z-20">
+                      View Gallery
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
           </div>
+
         </div>
       </section>
 
